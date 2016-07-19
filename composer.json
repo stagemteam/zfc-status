@@ -1,0 +1,34 @@
+{
+  "name": "agerecompany/zfc-status",
+  "description": "Status Module for ZF2",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "user",
+    "status",
+    "agere"
+  ],
+  "authors": [
+    {
+      "name": "Sergiy Popov",
+      "email": "popow.sergiy@gmail.com",
+      "homepage": "http://agere.com.ua/",
+      "role": "Developer"
+    },
+    {
+      "name": "Vlad Kozak",
+      "email": "vlad.gem.typ@gmail.com",
+      "homepage": "http://agere.com.ua/",
+      "role": "Developer"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">=5.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Agere\\Status\\": "src/"
+    }
+  }
+}
