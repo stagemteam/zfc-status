@@ -1,0 +1,167 @@
+<?php
+/**
+ * Status buttons factory
+ *
+ * @category Agere
+ * @package Agere_Status
+ * @author Popov Sergiy <popov@agere.com.ua>
+ * @datetime: 19.03.2016 23:43
+ */
+namespace Agere\Status\Form\Factory;
+
+use Zend\ServiceManager\ServiceLocatorInterface;
+
+use Zend\Mvc\Controller\Plugin\Params;
+
+
+use Agere\Status\Service\StatusChanger;
+use Agere\Status\Form\ButtonFieldset;
+
+class ButtonFieldsetFactory {
+
+	/**
+	 * @param ServiceLocatorInterface $fm
+	 * @param $name
+	 * @param $requestedName
+	 * @return ButtonFieldset
+	 * @link http://ocramius.github.io/blog/zend-framework-2-delegator-factories-explained/
+	 */
+	public function __invoke(ServiceLocatorInterface $fm, $name, $requestedName) {
+		$sm = $fm->getServiceLocator();
+		$om = $sm->get('Doctrine\ORM\EntityManager');
+		$cm = $sm->get('ControllerPluginManager');
+		$vm = $sm->get('ViewHelperManager');
+		$url = $cm->get('url');
+		/** @var Params $route */
+		$current = $cm->get('current');
+		$route = $current('route');
+		/** @var StatusChanger $changer */
+		$changer = $sm->get('StatusChanger');
+		$moduleService = $sm->get('EntityService');
+
+		$serviceName = function() use($current) {
+			$controllerName = array_pop(explode('\\', get_class($current->getController())));
+			return substr($controllerName, 0, -10) . 'Service';
+		};
+
+		//\Zend\Debug\Debug::dump([$serviceName]); die(__METHOD__);
+
+		$service = $sm->get($serviceName());
+
+		$item = $service->getRepository()->findOneById((int) $route->getParam('id'));
+
+		//\Zend\Debug\Debug::dump([$current('module'), get_class($item), $item->getId()]); die(__METHOD__);
+
+		/** @var InvoiceForm $form */
+		//$config = $sm->get('Config');
+
+		/** @var Invoice $invoice */
+		//$invoice = ($invoice = $om->find('Agere\Invoice\Model\Invoice', $id = (int) $route->getParam('id')))
+		//	? $invoice
+		//	: $sm->get('Agere\Invoice\Model\Invoice');
+
+		//$form->bind($invoice);
+
+		$module = $moduleService->getOneItem($current('module'), 'namespace');
+		$status = $changer->setModule($module)
+			->setItem($item)
+			->getOldStatus()
+		;
+		\Zend\Debug\Debug::dump($status->getName()); die(__METHOD__);
+
+		$fieldset = new ButtonFieldset();
+		/**
+		 * $action = $this->url('default', ['controller' => 'status', 'action' => 'changeStatus']); ?>
+		<?php if (isset($statuses[$statusMnemo]['next'])) : ?>
+		<?php foreach($statuses[$statusMnemo]['next'] as $status) : ?>
+		<button class="<?= $class ?>" type="button" data-status="<?= $status ?>" data-action="<?= $action ?>">
+		<?= $statuses[$status]['label'] ?>
+		 */
+
+		/*
+		<input type="hidden" name="module" value="<?= $this->current('module') ?>">
+			<input type="hidden" name="entity" value="<?= get_class($item) ?>">
+			<input type="hidden" name="itemId" value="<?= $item->getId() ?>">
+		*/
+
+		$fieldset->add([
+			'name' => 'module',
+			'type' => 'hidden',
+			'attributes' => [
+				'value' => $current('module'),
+			],
+		]);
+
+		$fieldset->add([
+			'name' => 'item',
+			'type' => 'hidden',
+			'attributes' => [
+				'value' => get_class($item),
+			],
+		]);
+
+		$fieldset->add([
+			'name' => 'itemId',
+			'type' => 'hidden',
+			'attributes' => [
+				'value' => $item->getId(),
+			],
+		]);
+
+
+		foreach ($status->getWorkflow() as $workflow) {
+			if ($changer->canChangeTo($workflow)) {
+				//\Zend\Debug\Debug::dump($workflow->getName());
+				$fieldset->add([
+					'name' => 'status-' . $workflow->getMnemo(),
+					'type' => 'button',
+					'options' => [
+						'label' => $workflow->getName(),
+					],
+					'attributes' => [
+						'value' => $workflow->getName(),
+						'class' => 'btn btn-primary btn-xs btn-changeStatus',
+						'data-status' => $workflow->getMnemo(),
+						'data-action' => $url->fromRoute('default', ['controller' => 'status', 'action' => 'change']),
+					]
+				]);
+			}
+		}
+
+
+		//\Zend\Debug\Debug::dump([$status->getId(), get_class($changer->getOldStatus())]); die(__METHOD__);
+
+		/*if (isset($config['status_fields'][$current('module')][$status->getMnemo()])) {
+			$statusFields = $config['status_fields'][$current('module')][$status->getMnemo()];
+
+			// @todo: Create recursion as in InvoiceProductGrid::prepareColumns()
+			$validationGroup = [];
+			foreach ($statusFields as $key => $value) {
+				if (is_array($value)) {
+					foreach ($value as $k => $v) {
+						$disabled =  true;
+						if ($v === PermissionAccess::PERMISSION_WRITE) {
+							$disabled =  false;
+						}
+						$validationGroup[$key][] = $k;
+						$form->get($key)->get($k)->setAttribute('disabled', $disabled);
+					}
+				}
+			}
+			$form->setValidationGroup($validationGroup);
+		}*/
+		//\Zend\Debug\Debug::dump(get_class()); die(__METHOD__);
+
+		//$form->get('productCity')->get('quantity')->setValue(0); // overwrite value
+
+		//$form->get('productCity')->get('quantity')->setAttribute('permission', 2);
+		//$form->get('productCity')->get('shelf')->setAttribute('permission', 2);
+
+		//\Zend\Debug\Debug::dump('Yahoooo! This works!' . __METHOD__);
+
+		//$logger->clearFilters();
+		//$logger->addFormatter(new HttpRequestContextFormatter());
+
+		return $fieldset;
+	}
+}

@@ -1,0 +1,55 @@
+<?php
+/**
+ * @see \TwbBundle\Form\View\Helper\TwbBundleForm
+ */
+$controller = $this->current('route')->getParam('controller')
+?>
+<!--hardcode-->
+<button title="Назад" onclick="document.location.href='/<?= 'status'   ;?>'; return false" class="btn btn-default btn-xs">Назад</button>
+
+<?php
+/*$form->setAttribute('action', $this->url('default/wildcard', [
+    'controller' => $this->layout()->route->getParam('controller'),
+    'action' => $this->layout()->route->getParam('action'),
+    'id' => $this->layout()->route->getParam('id'),
+]))->prepare();*/
+
+// We call the prepare here in order to fill the initial data and adjust the form properties, if needed
+$form->setAttribute('class','form-horizontal');
+$form->prepare();
+
+?>
+<div class="row">
+    <!-- left column -->
+    <div class="col-md-6" style="margin-left: 50px;">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-body">
+                <?= $this->form(null, null)->openTag($form) ?>
+                <?php /** @var \Agere\Material\Form\MaterialFieldset */ ?>
+                <?php foreach ($form->get('status') as $key => $elementOrFieldset) : ?>
+                    <?php if ($elementOrFieldset instanceof \Zend\Form\FieldsetInterface) : ?>
+                        <div class="form-group">
+                            <fieldset id="<?= $key ?>">
+                                <?php foreach ($elementOrFieldset as $subElementOrFieldset) : ?>
+                                    <div class="field-group">
+                                        <?= $this->formRow($subElementOrFieldset); ?>
+                                    </div>
+                                <?php endforeach;?>
+                            </fieldset>
+                        </div>
+                    <?php else : ?>
+                        <div class="form-group">
+                            <?= $this->formRow($elementOrFieldset); ?>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach;?>
+
+                <div class="box-footer">
+                    <?= $this->formElement($form->get('submit'))?>
+                </div>
+                <?= $this->form()->closeTag() ?>
+            </div>
+        </div>
+    </div>
+</div>

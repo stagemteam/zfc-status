@@ -1,0 +1,68 @@
+<?php if (!isset($fieldset) || !isset($item)) : ?>
+	<?php return; ?>
+<?php endif; ?>
+<div class="row row-fluid clearfix toolbar">
+	<!-- Status buttons -->
+	<div class="span6 col-md-6">
+		<?php /*<div class="btn-group">*/ ?>
+			<?php /*
+			<input type="hidden" name="module" value="<?= $this->current('module') ?>">
+			<input type="hidden" name="entity" value="<?= get_class($item) ?>">
+			<input type="hidden" name="itemId" value="<?= $item->getId() ?>">
+ 			*/ ?>
+			<?php /*$class = 'btn btn-primary btn-xs btn-changeStatus'; ?>
+			<?php //$action = $this->url('default', ['controller' => $this->current('controller'), 'action' => 'changeStatus']); ?>
+			<?php $action = $this->url('default', ['controller' => 'status', 'action' => 'changeStatus']); ?>
+			<?php if (isset($statuses[$statusMnemo]['next'])) : ?>
+				<?php foreach($statuses[$statusMnemo]['next'] as $status) : ?>
+					<button class="<?= $class ?>" type="button" data-status="<?= $status ?>" data-action="<?= $action ?>">
+						<?= $statuses[$status]['label'] ?>
+					</button>
+				<?php endforeach; ?>
+
+			<?php endif; */?>
+
+			<?php foreach ($fieldset as $button) : ?>
+				<?= $this->formRow($button) ?>
+			<?php endforeach; ?>
+		<?php /*</div>*/ ?>
+	</div>
+
+	<script>
+		$('.btn-changeStatus').on('click', function(event) {
+			event.preventDefault();
+			var self = this;
+			var elm = $(self);
+			var form = elm.closest('form');
+
+			form.append('<input name="status" type="hidden" value="' + elm.data('status') + '">');
+			var sendData = form.serialize();
+			var sendRoute = elm.data('action');
+			//shop.addItemToOpenCardOnLoad(self);
+
+			console.log(sendData);
+			$.ajax({
+				url: sendRoute,
+				type: 'POST',
+				data: sendData,
+			}).done(function(data) {
+				if ($.trim(data.message).length > 0) {
+					alert(data.message);
+				} else {
+					// @todo: Реалізувати підтягування контенту через ajax, щоб уникнути зайве перезавантаження сторінки
+					window.location.reload();
+				}
+
+				elm.trigger('status.change', data);
+
+				return false;
+				//shop.getOpenCard();
+				//shop.addItemToOpenCardOnDone(self);
+			}).fail(function (jqXHR, textStatus) {
+				//xxx;
+			});
+
+			return false;
+		});
+	</script>
+</div>
