@@ -13,11 +13,24 @@ class StatusRepository extends EntityRepository {
 
 	public function getStatuses()
 	{
+		$module = 'module';
 		$qb = $this->createQueryBuilder($this->_table)
+			->leftJoin($this->_table . '.module', $module)
 		;
 		return $qb;
 	}
-	
+
+	/*	public function getStatutesByModule($module) {
+
+            \Zend\Debug\Debug::dump($module); die(__METHOD__);
+            $qb = $this->getStatuses();
+            $qb->where($qb->expr()->in($this->_alias . '.module', '?1'));
+            $qb->setParameter(1, $criteria['module']);
+            return $qb;
+        }*/
+
+
+
 	/**
 	 * @param string|array $mnemo
 	 * @return \Doctrine\ORM\QueryBuilder

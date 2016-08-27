@@ -59,3 +59,14 @@ Agere\Status\Model\Status:
       joinColumn:
         name: moduleId
         referencedColumnName: id
+  manyToMany:
+    workflow:
+      targetEntity: Agere\Status\Model\Status
+      joinTable:
+        name: status_workflow
+        joinColumns:
+          statusId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          nextStatusId:
+            referencedColumnName: id

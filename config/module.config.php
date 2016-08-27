@@ -8,13 +8,13 @@ return array(
 			'Agere' => [
 				//'Agere\Spare\Controller\Spare' => [
 				//'spare' => [
-					'js' => [
-						//'media/js/cart.js',
-						__DIR__ . '/../view/public/js/status-button.js',
-					],
-					//'css' => [
-					//	__DIR__ . '/../view/public/css/'
-					//]
+				'js' => [
+					//'media/js/cart.js',
+					__DIR__ . '/../view/public/js/status-button.js',
+				],
+				//'css' => [
+				//	__DIR__ . '/../view/public/css/'
+				//]
 				//],
 			]
 			//'media' => ['img', 'fonts']
@@ -29,10 +29,12 @@ return array(
 
 	'controller_plugins' => [
 		'aliases' => [
+			'status' => Controller\Plugin\StatusPlugin::class,
 			'statusable' => Controller\Plugin\Statusable::class,
 			'validatable' => Controller\Plugin\Validatable::class,
 		],
 		'factories' => [
+			Controller\Plugin\StatusPlugin::class => Controller\Plugin\Factory\StatusPluginFactory::class,
 			Controller\Plugin\Statusable::class => Controller\Plugin\Factory\StatusableFactory::class,
 			Controller\Plugin\Validatable::class => Controller\Plugin\Factory\ValidatableFactory::class,
 		],
@@ -70,16 +72,16 @@ return array(
 			'StatusProgressService' => Service\ProgressService::class,
 			'StatusProgressGrid' => Block\Grid\ProgressGrid::class,
 			'StatusGrid' => Block\Grid\StatusGrid::class,
-			
+
 			'StatusChanger' => Service\StatusChanger::class,
 			'RuleChecker' => Service\RuleChecker::class,
-        ],
-        'invokables' => [
-            Model\Progress::class => Model\Progress::class,
+		],
+		'invokables' => [
+			Model\Progress::class => Model\Progress::class,
 			Model\Status::class => Model\Status::class,
 			Service\StatusService::class => Service\StatusService::class,
-            //Service\ProgressService::class => Service\ProgressService::class,
-        ],
+			//Service\ProgressService::class => Service\ProgressService::class,
+		],
 
 		'factories' => [
 			Service\ProgressService::class => Service\Factory\ProgressServiceFactory::class,
@@ -96,7 +98,7 @@ return array(
 		],
 
 		'shared' => [
-            Model\Progress::class => false,
+			Model\Progress::class => false,
 			Service\StatusChanger::class => false, // System can have several StatusChanger
 		]
 	),

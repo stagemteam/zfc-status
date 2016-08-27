@@ -2,22 +2,22 @@
 namespace Agere\Status\Service;
 
 use Agere\Core\Service\DomainServiceAbstract;
-use Agere\Entity\Controller\Plugin\Module as ModuleHelper;
+use Agere\Module\Controller\Plugin\ModulePlugin;
 use Agere\Status\Model\Repository\ProgressRepository;
 use Agere\Status\Model\Progress;
 
 class ProgressService extends DomainServiceAbstract {
 
-	protected $entity = Progress::class;
+    protected $entity = Progress::class;
 
     protected $user;
 
-    /** @var ModuleHelper */
+    /** @var ModulePlugin */
     protected $moduleHelper;
 
-    public function __construct($user, ModuleHelper $moduleHelper) {
+    public function __construct($user, ModulePlugin $modulePlugin) {
         $this->user = $user;
-        $this->moduleHelper = $moduleHelper;
+        $this->moduleHelper = $modulePlugin;
     }
 
     public function setUser($user) {
@@ -46,12 +46,13 @@ class ProgressService extends DomainServiceAbstract {
         $module = $this->moduleHelper->setRealContext($item)->getModule();
         /** @var Progress $progress */
         $progress = $this->getObjectModel();
-
         if (!$item->getId()) { // @todo Щоб уникнути не бажаного flush реалізувати single_table або розібратись у Statusable (від Taggable, Sortable etc.)
             $this->getObjectManager()->flush();
         }
+        //\Zend\Debug\Debug::dump($item->getId()); die(__METHOD__); // ця помилка у create методі так як у нас немає id, а чомусь у edit наших статусів не видно. Не розумію чому
 
         $progress->setItemId($item->getId());
+        //$progress->setItemId(1);
         $progress->setUser($this->user)
             ->setStatus($status)
             ->setModule($module)
@@ -69,7 +70,7 @@ class ProgressService extends DomainServiceAbstract {
         ]); die(__METHOD__);*/
 
         $this->getObjectManager()->persist($progress);
-
+        
         return $this;
     }
 

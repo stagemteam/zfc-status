@@ -30,7 +30,6 @@ class StatusListener implements ListenerAggregateInterface {
             $item = $e->getTarget();
             $newStatus = $e->getParam('newStatus');
             //$oldStatus = $e->getParam('oldStatus');
-
             /** @var ProgressService $progressService */
             $progressService = $sm->get('StatusProgressService');
             $progressService->writeProgress($item, $newStatus);

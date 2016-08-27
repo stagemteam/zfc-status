@@ -12,8 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Agere\Core\Model\DomainAwareTrait;
-use Agere\Module\Model\Module;
-use Agere\User\Model\User;
+use Agere\Entity\Model\Entity as Module;
+use User\Model\Entity\User as Users;
+//use User\Model\Entity\User as Users;
 
 /**
  * @ORM\Entity(repositoryClass="Agere\Status\Model\Repository\StatusProgressRepository")
@@ -23,12 +24,12 @@ class Progress {
 
     use DomainAwareTrait;
 
-    /**
+	/**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    protected $id;
+	 */
+	protected $id;
 
     /**
      * @var \DateTime
@@ -40,14 +41,6 @@ class Progress {
     /** @ORM\Column(name="snippet", type="string", unique=false, nullable=false, length=255) */
     protected $snippet;
 
-
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Agere\User\Model\User")
-     * @ORM\JoinColumn(name="userId", referencedColumnName="id")
-     */
-    protected $user;
 
     /**
      * @ORM\ManyToOne(targetEntity="Agere\Status\Model\Status")
@@ -64,10 +57,19 @@ class Progress {
     /**
      * @var Module
      *
-     * @ORM\ManyToOne(targetEntity="Agere\Module\Model\Module")
+     * @ORM\ManyToOne(targetEntity="Agere\Entity\Model\Entity")
      * @ORM\JoinColumn(name="moduleId", referencedColumnName="id")
      */
     protected $module;
+
+    /**
+     * @var Users
+     *
+     * @ORM\ManyToOne(targetEntity="Agere\User\Model\User")
+     * @ORM\JoinColumn(name="userId", referencedColumnName="id")
+     */
+    protected $user;
+
 
     /**
      * @param mixed $id
@@ -75,8 +77,6 @@ class Progress {
     public function setId($id)
     {
         $this->id = $id;
-
-        return $this;
     }
 
     /**
@@ -93,8 +93,6 @@ class Progress {
     public function setItemId($itemId)
     {
         $this->itemId = $itemId;
-
-        return $this;
     }
 
     /**
@@ -107,17 +105,14 @@ class Progress {
 
     /**
      * @param \DateTime $modifiedAt
-     * @return $this
      */
     public function setModifiedAt($modifiedAt)
     {
         $this->modifiedAt = $modifiedAt;
-
-        return $this;
     }
 
     /**
-     * @return \Magere\Status\Model\datetime
+     * @return \DateTime
      */
     public function getModifiedAt()
     {
@@ -125,18 +120,15 @@ class Progress {
     }
 
     /**
-     * @param \Magere\Entity\Model\Entity $module
-     * @return $this
+     * @param \Agere\Entity\Model\Entity $module
      */
     public function setModule($module)
     {
         $this->module = $module;
-
-        return $this;
     }
 
     /**
-     * @return \Magere\Entity\Model\Entity
+     * @return \Agere\Entity\Model\Entity
      */
     public function getModule()
     {
@@ -149,8 +141,6 @@ class Progress {
     public function setSnippet($snippet)
     {
         $this->snippet = $snippet;
-
-        return $this;
     }
 
     /**
@@ -167,8 +157,6 @@ class Progress {
     public function setStatus($status)
     {
         $this->status = $status;
-
-        return $this;
     }
 
     /**
@@ -180,21 +168,20 @@ class Progress {
     }
 
     /**
-     * @param \Agere\User\Model\User $user
+     * @param \Agere\Status\Model\User $user
      */
     public function setUser($user)
     {
         $this->user = $user;
-
+        
         return $this;
     }
 
     /**
-     * @return \Agere\User\Model\User
+     * @return \Agere\Status\Model\User
      */
     public function getUser()
     {
         return $this->user;
     }
-
 }

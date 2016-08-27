@@ -71,6 +71,12 @@ FORMATTER;
         $col->setWidth(2);
         $grid->addColumn($col);
 
+        $col = new Column\Select('namespace', 'module');
+        $col->setLabel('Entity');
+        $col->setTranslationEnabled();
+        $col->setWidth(2);
+        $grid->addColumn($col);
+
         return $grid;
     }
 

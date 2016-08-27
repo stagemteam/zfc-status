@@ -13,7 +13,7 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 
-use Agere\Entity\Service\EntityService as ModuleService;
+use Agere\Module\Service\ModuleService;
 use Agere\Status\Service\StatusService;
 use Magere\Permission\Service\PermissionService;
 
@@ -30,20 +30,19 @@ class StatusChangerFactory implements FactoryInterface {
 		/** @var StatusService $statusService */
 		$statusService = $sm->get('StatusService');
 		/** @var ModuleService $moduleService */
-		$moduleService = $sm->get('EntityService');
+		$moduleService = $sm->get('ModuleService');
 		/** @var PermissionService $permissionService */
 		$permissionService = $sm->get('PermissionService');
 		$ruleChecker = $sm->get('RuleChecker');
 
 		/** @var Current $current */
 		$current = $cpm->get('current');
+		$modulePlugin = $cpm->get('module');
 		$user = $cpm->get('user')->current();
 		/** @var Module $module */
 		//$module = $moduleService->getOneItem($current('module'), 'namespace');
 		// Nothing change. Current module relative path not allowed
-		$module = $moduleService->getOneItem('Magere\Status', 'namespace');
-
-		//\Zend\Debug\Debug::dump($defaultStatus->getId()); die(__METHOD__);
+		$module = $moduleService->getRepository()->findOneBy(['namespace' => 'Agere\Status']);
 
 		$changer = new StatusChanger($statusService);
 		//$changer->setModule($module);

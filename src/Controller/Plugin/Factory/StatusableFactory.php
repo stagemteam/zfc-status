@@ -27,7 +27,7 @@ class StatusableFactory
         $module = $cpm->get('module');
         //$route = $current('route');
         $changer = $sm->get('StatusChanger');
-        $moduleService = $sm->get('EntityService');
+        $moduleService = $sm->get('ModuleService');
 
         return (new Statusable($changer))
             ->injectUrl($url)

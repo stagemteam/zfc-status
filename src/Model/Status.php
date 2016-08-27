@@ -9,52 +9,70 @@ use Agere\Core\Model\DomainAwareTrait;
  */
 class Status {
 
-	use DomainAwareTrait;
+    use DomainAwareTrait;
 
-	/**
-	 * @var integer
-	 */
-	private $id;
+    /**
+     * @var integer
+     */
+    private $id;
 
-	/**
-	 * @var string
-	 */
-	private $name;
+    /**
+     * @var string
+     */
+    private $name;
 
-	/**
-	 * @var string
-	 */
-	private $mnemo;
+    /**
+     * @var string
+     */
+    private $mnemo;
 
-	/**
-	 * @var integer
-	 */
-	private $moduleId;
+    /**
+     * @var integer
+     */
+    private $moduleId;
 
-	/**
-	 * @var string
-	 */
-	private $hidden;
+    /**
+     * @var string
+     */
+    private $hidden;
 
-	/**
-	 * @var string
-	 */
-	private $remove;
+    /**
+     * @var string
+     */
+    private $remove;
 
-	/**
-	 * @var string
-	 */
-	private $automatically;
+    /**
+     * @var string
+     */
+    private $automatically;
 
-	/**
-	 * @var string
-	 */
-	private $color;
+    /**
+     * @var string
+     */
+    private $color;
 
-	/**
-	 * @var \Agere\Module\Model\Module
-	 */
-	private $module;
+    /**
+     * @var \Agere\Module\Model\Module
+     */
+    private $module;
+
+    /** @var Status[] */
+    private $workflow;
+
+    /** @var Rule */
+    private $rule;
+
+    /** @var Progress */
+    private $progress;
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->workflow = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->progress = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
 
     /**
      * @param string $automatically
@@ -198,6 +216,63 @@ class Status {
     public function getRemove()
     {
         return $this->remove;
+    }
+
+    /**
+     * @return Status[]
+     */
+    public function getWorkflow()
+    {
+        return $this->workflow;
+    }
+
+    /**
+     * @param Status[] $workflow
+     * @return Status
+     */
+    public function setWorkflow($workflow)
+    {
+        $this->workflow = $workflow;
+
+        return $this;
+    }
+
+    /**
+     * @return Rule
+     */
+    public function getRule()
+    {
+        return $this->rule;
+    }
+
+    /**
+     * @param Rule $rule
+     * @return Status
+     */
+    public function setRule($rule)
+    {
+        $this->rule = $rule;
+
+        return $this;
+    }
+
+    /**
+     * @return Progress
+     */
+    public function getProgress()
+    {
+        return $this->progress;
+    }
+
+    /**
+     * @param Progress $progress
+     * @return Status
+     */
+    public function setProgress($progress)
+    {
+        $this->progress = $progress;
+
+        return $this;
     }
 
 }

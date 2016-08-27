@@ -17,8 +17,10 @@ use Agere\Status\Form\StatusForm;
  *
  * @package Magere\Status
  * @method \Magere\Status\Controller\Plugin\Statusable statusable()
- * @method \Magere\Status\Controller\Plugin\Validatable validatable()
- * @method \Magere\Entity\Controller\Plugin\Module module()
+ * @method \Agere\Status\Controller\Plugin\Validatable validatable()
+ * @method \Magere\Status\Controller\Plugin\StatusPlugin status()
+ * @method \Magere\Entity\Controller\Plugin\ModulePlugin module()
+ * @method \Magere\Entity\Controller\Plugin\EntityPlugin entity()
  */
 class StatusController extends AbstractActionController {
 
@@ -96,7 +98,7 @@ class StatusController extends AbstractActionController {
 		return  $this->getServiceLocator()->get('StatusService');
 	}
 
-/*===================Old code======================*/
+	/*===================Old code======================*/
 
 	public function indexAction2() {
 		$locator = $this->getServiceLocator();
@@ -328,38 +330,14 @@ class StatusController extends AbstractActionController {
 				$sql->prepareStatementForSqlObject($insert)->execute();
 			}
 
-			//$SqlString = $sql->buildSqlString($insert);
-			//\Zend\Debug\Debug::dump($SqlString); //die(__METHOD__);
-
-			/** @var \Zend\Db\Adapter\Driver\Pdo\Result $results */
-			//$results = $sql->prepareStatementForSqlObject($insert)->execute();
-			//$select = $sql->select($permissionTable)->where(['id' => $results->getGeneratedValue()]);
-			//$permissionPageBind = $sql->prepareStatementForSqlObject($select)->execute()->current();
-
-
-			//\Zend\Debug\Debug::dump($permissionPageBind); die(__METHOD__ . __LINE__);
 
 		}
 
 		\Zend\Debug\Debug::dump($permissionAction); die(__METHOD__);
 
 
-
-		//$spec = function (\Zend\Db\Sql\Where $where) {
-		//	$where->like('username', 'ralph%');
-		//	$where->in('pc.cityId', [104, 111, 116]);
-		//};
-		//$select->where(new \Zend\Db\Sql\Predicate\In('pc.cityId', [104,111,116]));
-		//$select->where($spec);
-
-		//$statement = $sql->prepareStatementForSqlObject($select);
-		//$resultSet = $statement->execute();
-		//$SqlString = $sql->buildSqlString($select);
-		//\Zend\Debug\Debug::dump($SqlString); die(__METHOD__);
-
 	}
 
-	//------------------------------------AJAX----------------------------------------
 	/**
 	 * Ajax change status.
 	 *
@@ -374,7 +352,7 @@ class StatusController extends AbstractActionController {
 			/** @var \Magere\Entity\Service\EntityService $moduleService */
 			/** @var \Zend\Stdlib\Parameters $post */
 			$sm = $this->getServiceLocator();
-			$fem = $sm->get('FormElementManager');
+			//$fem = $sm->get('FormElementManager');
 			$om = $sm->get('Doctrine\ORM\EntityManager');
 			$statusService = $sm->get('StatusService');
 			//$moduleService = $sm->get('EntityService');
@@ -392,124 +370,48 @@ class StatusController extends AbstractActionController {
 			$itemIdPost = $post->get('itemId');
 			$statusPost = $post->get('status');
 
-
 			//\Zend\Debug\Debug::dump($post); die(__METHOD__);
 
 			#unset($post['buttons']);
 			unset($post['status']);
 
 			// @todo: Діставати сутність з сервісу через $item = $service->find($itemIdPost);
-			$item = $om->find($itemPost, $itemIdPost);
+			$item = ($item = $om->find($itemPost, $itemIdPost))
+				? $item
+				: $sm->get($itemPost);
+
+			$module = $this->module()->setRealContext($item)->getModule();
+			$status = $statusService->getRepository()->findOneBy(['mnemo' => $statusPost, 'module' => $module]);
 
 			// @todo: Реалізувати Ініціалізатор який буде ін'єктити об'єкт форми у сервіс.
 			// 		Тут просто викликати метод $service->getForm()
-			$formName = str_replace('Model', 'Form', $itemPost) . 'Form';
+			//$formName = str_replace('Model', 'Form', $itemPost) . 'Form';
 			/** @var \Zend\Form\Form $form */
-			$form = $fem->get($formName);
+			//$form = $fem->get($formName);
+			$form = $this->status()->getChangeForm($itemPost);
 
 			$form->bind($item);
 
-			if (count($post)) {
+			//if (count($post)) {
+			// check if request based on form (true) or related fieldset (false)
+			if (count($post->get($form->getName()))) {
 				$form->setData($post); // @FIXME
-                //\Zend\Debug\Debug::dump($post); die(__METHOD__);
+				//\Zend\Debug\Debug::dump($post); die(__METHOD__);
 			}
 
-			$this->validatable()->apply($form);
-
-			//\Zend\Debug\Debug::dump($form->getValidationGroup());
-
-			//$formOrElement = $form->get('invoice')->get('invoiceProducts')->getTargetElement()->get('quantityItems')->getTargetElement();
-			/** @var \DoctrineModule\Stdlib\Hydrator\DoctrineObject $hydrator */
-			//$hydrator = $formOrElement->getHydrator();
-
-			//foreach ($hydrator->getStrategy('*') as $strategy) {
-			//	\Zend\Debug\Debug::dump([get_class($strategy)]);
-			//}
-
-            /*foreach ($hydrator->strategies as $key => $value) {
-                \Zend\Debug\Debug::dump([$key, get_class($value)]); //die(__METHOD__);
-            }
-
-            \Zend\Debug\Debug::dump([
-                //get_class($hydrator->getStrategy('quantityItem')),
-                get_class($formOrElement->getHydrator()),
-                get_class($formOrElement),
-            ]);
-            die(__METHOD__);*/
-			///\Zend\Debug\Debug::dump([$formOrElement->getName(), get_class($targetElement->getHydrator()), $config]); die(__METHOD__);
-
+			$this->validatable()->apply($form, $status);
 
 			if ($form->isValid()) {
-			//if (true) {
-				//\Zend\Debug\Debug::dump($post);
-				//\Zend\Debug\Debug::dump($form->getValidationGroup());
-				//\Zend\Debug\Debug::dump('is valid!'); die(__METHOD__);
-
-
-				#$invoiceProducts = $om->getRepository($itemPost . 'Product')->findBy(['invoice' => $item]);
-
-                //\Zend\Debug\Debug::dump(count($invoiceProducts), 'count($invoiceProducts)');
-				/*foreach ($item->getInvoiceProducts() as $invoiceProduct) {
-				//foreach ($invoiceProducts as $invoiceProduct) {
-					foreach ($invoiceProduct->getQuantityItems() as $quantityItem) {
-						\Zend\Debug\Debug::dump($quantityItem->getId(), '$quantityItem->getId()');
-						\Zend\Debug\Debug::dump($quantityItem->getQuantity(), '$quantityItem->getQuantity()');
-						\Zend\Debug\Debug::dump($quantityItem->getItem()->getId(), '$quantityItem->getItem()->getId()');
-						\Zend\Debug\Debug::dump($quantityItem->getStatus()->getMnemo(), '$quantityItem->getStatus()->getMnemo()');
-						\Zend\Debug\Debug::dump('------------');
-					}
-					\Zend\Debug\Debug::dump('*********************************');
+				// by default entity after validation is detached, we persist this to new state
+				if (!$om->contains($item)) {
+					$om->persist($item);
 				}
 
-				die(__METHOD__);*/
-
-
-				/*\Zend\Debug\Debug::dump(get_class($item = $form->getData()));
-				foreach ($item->getInvoiceProducts() as $invoiceProduct) {
-					\Zend\Debug\Debug::dump($invoiceProduct->getId(), '$invoiceProduct->getId()');
-					\Zend\Debug\Debug::dump(count($invoiceProduct->getQuantityItems()));
-					\Zend\Debug\Debug::dump($invoiceProduct->getQuantityItems()->first()->getId(), '$invoiceProduct->getQuantityItems()->first()->getId()');
-					\Zend\Debug\Debug::dump($invoiceProduct->getQuantityItems()->last()->getId(), '$invoiceProduct->getQuantityItems()->last()->getId()');
-					\Zend\Debug\Debug::dump($post);
-					die(__METHOD__);
-				}*/
-
-				/** @var \Doctrine\ORM\Mapping\ClassMetadata $class */
-				#$class = $om->getMetadataFactory()->getMetadataFor($itemPost);
-				#$moduleName = $class->isInheritanceTypeSingleTable()
-				#	? $this->current()->currentModule(get_parent_class($itemPost))
-				#	: $this->current()->currentModule($itemPost);
-
-				//\Zend\Debug\Debug::dump($moduleName, '$moduleName'); die(__METHOD__);
-
-				//$module = $moduleService->getOneItem('Magere\Status', 'namespace');
-				#$module = $moduleService->getOneItem($moduleName, 'namespace');
-				$module = $this->module()->setRealContext($item)->getModule();;
-
-                $status = $statusService->getOneItemByMnemo($statusPost, $module->getMnemo());
-
-
-				//$tree = $permissionService->getHumanReadablePermissionsTree($module, $this->user()->current());
-
-
-
-				//die(__METHOD__);
-
-				/*\Zend\Debug\Debug::dump([
-					'$module=' . get_class($module),
-					'$item=' . get_class($item),
-					'$post->get("status")=' . $post->get('status'),
-					'$status->getMnemo()=' . $status->getMnemo(),
-					'$item->getStatus()->getMnemo()=' . $item->getStatus()->getMnemo(),
-					//'$oldStatus->getMnemo()=' . $oldStatus->getMnemo(),
-					__METHOD__.__LINE__
-				]);*/
 
 				/** @var \Magere\Status\Service\StatusChanger $changer */
 				$message = '';
 				$changer = $sm->get('StatusChanger');
 				$changer->setModule($module)->setItem($item);
-
 
 				if ($changer->canChangeTo($status)) {
 					$oldStatus = $changer->getOldStatus();
@@ -520,9 +422,21 @@ class StatusController extends AbstractActionController {
 
 					$changer->changeTo($status);
 
+					// persist only new object (not removed or detached)
+					// this persist may be redundant
+					if ($this->entity()->isNew($item)) {
+						$om->persist($item);
+					}
+					//можливо щось у Work при створенні?
+					/*\Zend\Debug\Debug::dump([(
+						$item->getId()),
+						$om->getUnitOfWork()->getEntityState($item),
+						$this->entity()->isNew($item),
+						$this->entity()->isManaged($item)]);
+					die(__METHOD__.__LINE__);*/
+
 					$this->getEventManager()->trigger('change.post', $item, $params);
 					$this->getEventManager()->trigger('change.' . $status->getMnemo() . '.post', $item, $params);
-
 					/*\Zend\Debug\Debug::dump([
 						'$post->get("status")' . $post->get('status'),
 						'$status->getMnemo()' . $status->getMnemo(),
@@ -530,43 +444,45 @@ class StatusController extends AbstractActionController {
 						'$oldStatus->getMnemo()' . $oldStatus->getMnemo(),
 					]); die(__METHOD__.__LINE__); die(__METHOD__);*/
 
-					// save to db
-					if(!$om->contains($item)) {
-						$om->persist($item);
-					}
+					/*\Zend\Debug\Debug::dump([
+                        $item->getCart()->getDateSend()
+                    ]);*/
+					//die(__METHOD__);
+
 					//\Zend\Debug\Debug::dump([$post->get('status'), $item->getStatus()->getMnemo(), $oldStatus->getMnemo()]); die(__METHOD__.__LINE__);
 					$om->flush();
+					return $this->redirect()->toRoute('default', array (
+						'controller' => 'status',
+						'action'     => 'index',
+					));
 				} else {
 					$message = 'У вас нет доступа для изменения статуса';
 				}
-			}
-            else {
-                $asString = function($collection) use (& $asString) {
-                    static $string = '';
+			} else {
+				$asString = function($collection) use (& $asString) {
+					static $string = '';
 
-                    foreach ($collection as $key => $row) {
-                        if (is_array($row)) {
-                            $asString($row);
-                        } else {
-                            $string .= $row;
-                        }
-                    }
+					foreach ($collection as $key => $row) {
+						if (is_array($row)) {
+							$asString($row);
+						} else {
+							$string .= $row;
+						}
+					}
 
-                    return $string;
-                };
+					return $string;
+				};
 				// not valid form
-                $message = $asString($form->getMessages());
-                //\Zend\Debug\Debug::dump($message); die(__METHOD__);
-            }
+				$message = $asString($form->getMessages());
+				//\Zend\Debug\Debug::dump($message); die(__METHOD__);
+			}
 
 
-
-            /*\Zend\Debug\Debug::dump([
+			/*\Zend\Debug\Debug::dump([
                 $changer->getItemWithStatus()->getStatus()->getMnemo(),
                 $oldStatus->getMnemo(),
                 get_class($item->getInvoiceAcceptance())
             ]); die(__METHOD__);*/
-
 
 			$result = new JsonModel([
 				'message' => $message,
@@ -576,6 +492,10 @@ class StatusController extends AbstractActionController {
 		} else {
 			$this->getResponse()->setStatusCode(404);
 		}
+		return $this->redirect()->toRoute('default', array (
+			'controller' => 'status',
+			'action'     => 'index',
+		));
 	}
 
 	/**
@@ -599,8 +519,8 @@ class StatusController extends AbstractActionController {
 				$allow = $service->deleteItem($post['id']);
 				$result = new JsonModel([
 					'message' => ($allow)
-                        ? ''
-                        : 'Невозможно удалить № ' . $post['id'] . '. Сначала уберите прив\'язку к позиции!',
+						? ''
+						: 'Невозможно удалить № ' . $post['id'] . '. Сначала уберите прив\'язку к позиции!',
 				]);
 			} else {
 				$result = new JsonModel([

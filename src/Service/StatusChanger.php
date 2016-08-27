@@ -15,11 +15,11 @@ use DoctrineModule\Persistence\ProvidesObjectManager;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
-use Magere\Permission\Model\PermissionAccess;
+use Agere\Permission\Model\PermissionAccess;
 //use Magere\Status\Service\StatusService;
 use Agere\Status\Service\RuleChecker;
 use Agere\Status\Model\Status;
-use Agere\Entity\Model\Entity as Module;
+use Agere\Module\Model\Module;
 
 class StatusChanger implements ObjectManagerAwareInterface {
 
@@ -108,7 +108,7 @@ class StatusChanger implements ObjectManagerAwareInterface {
 		}*/
 		if (!$this->defaultStatus) {
 			$this->defaultStatus = $this->getStatusService()->getRepository()
-				->findOneBy(['entity' => $this->getModule(), 'automatically' => 1]);
+				->findOneBy(['module' => $this->getModule(), 'automatically' => 1]);
 		}
 		return $this->defaultStatus;
 	}
