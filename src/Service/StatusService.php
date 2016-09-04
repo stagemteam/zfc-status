@@ -2,7 +2,7 @@
 namespace Agere\Status\Service;
 
 use Agere\Permission\Service\AbstractEntityService;
-use Magere\Logs\Event\Logs as LogsEvent;
+//use Magere\Logs\Event\Logs as LogsEvent;
 use Agere\Status\Model\Status;
 
 use Agere\Core\Service\DomainServiceAbstract;
@@ -15,6 +15,27 @@ class StatusService extends DomainServiceAbstract {
 	protected $_repositoryName = 'status';
 	protected $_entityAlias = 'Status';
 
+	/** @var Module */
+	protected $module;
+
+	/**
+	 * @return Module
+	 */
+	public function getModule()
+	{
+		return $this->module;
+	}
+
+	/**
+	 * @param Module $module
+	 * @return StatusService
+	 */
+	public function setModule($module)
+	{
+		$this->module = $module;
+
+		return $this;
+	}
 	/**
 	 * @var array
 	 */
@@ -31,6 +52,15 @@ class StatusService extends DomainServiceAbstract {
 			$om->persist($status);
 		}
 		$om->flush();
+	}
+	
+	
+	
+	public function getStatusAutomaticallyByModule() {
+		$module = $this->getModule();
+		$status = $this->getRepository()->getStatus();
+		
+		return $status;
 	}
 	
 	/*===========================Old Code===========================*/

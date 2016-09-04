@@ -27,6 +27,12 @@ Agere\Status\Model\Progress:
       options:
        unsigned: true
   manyToOne:
+    user:
+        targetEntity: Agere\User\Model\User
+        cascade: ["persist"]
+        joinColumn:
+          name: userId
+          referencedColumnName: id
     status:
       targetEntity: Agere\Status\Model\Status
       joinColumn:

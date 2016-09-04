@@ -5,6 +5,7 @@ use Agere\Base\App\Exception;
 use Doctrine\ORM\Query\ResultSetMapping;
 use	Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\EntityRepository;
+use Zend\Debug\Debug;
 
 class StatusRepository extends EntityRepository {
 
@@ -20,14 +21,33 @@ class StatusRepository extends EntityRepository {
 		return $qb;
 	}
 
-	/*	public function getStatutesByModule($module) {
+	public function getStatutesByModule($module)
+	{
+		$qb = $this->getStatuses();
+		$qb->where($qb->expr()->in('module.namespace', '?1'));
+		$qb->setParameter(1, $module);
 
-            \Zend\Debug\Debug::dump($module); die(__METHOD__);
-            $qb = $this->getStatuses();
-            $qb->where($qb->expr()->in($this->_alias . '.module', '?1'));
-            $qb->setParameter(1, $criteria['module']);
-            return $qb;
-        }*/
+		return $qb->getQuery()->getArrayResult();
+	}
+
+	public function getStatusAutomaticallyByModule($module)
+	{
+		$m = 'module';
+		$qb = $this->createQueryBuilder($this->_table)
+			->leftJoin($this->_table . '.module', $m)
+		;
+		$qb->where(
+			$qb->expr()->andX(
+				$qb->expr()->eq($m . '.namespace', '?1'),
+				$qb->expr()->eq($this->_table . '.automatically', '?2')
+			)
+		);
+		$qb->setParameters([1 => $module, 2 => 1]);
+		//@todo Improve it 
+		$status = $this->find($qb->getQuery()->getArrayResult()[0]['id']);
+
+		return $status;
+	}
 
 
 
