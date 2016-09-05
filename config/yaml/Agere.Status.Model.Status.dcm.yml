@@ -59,6 +59,12 @@ Agere\Status\Model\Status:
       joinColumn:
         name: moduleId
         referencedColumnName: id
+    pool:
+      targetEntity: Agere\Pool\Model\Pool
+      cascade: ["persist"]
+      joinColumn:
+        name: poolId
+        referencedColumnName: id
   manyToMany:
     workflow:
       targetEntity: Agere\Status\Model\Status

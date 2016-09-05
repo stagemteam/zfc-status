@@ -65,6 +65,9 @@ class Status {
     /** @var Progress */
     private $progress;
 
+    /** @var Status[] */
+    private $pool;
+
     /**
      * Constructor
      */
@@ -271,6 +274,25 @@ class Status {
     public function setProgress($progress)
     {
         $this->progress = $progress;
+
+        return $this;
+    }
+
+    /**
+     * @return Status[]
+     */
+    public function getPool()
+    {
+        return $this->pool;
+    }
+
+    /**
+     * @param Status[] $pool
+     * @return Status
+     */
+    public function setPool($pool)
+    {
+        $this->pool = $pool;
 
         return $this;
     }

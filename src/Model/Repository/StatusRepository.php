@@ -12,15 +12,17 @@ class StatusRepository extends EntityRepository {
 	protected $_table = 'status';
 	protected $_alias = 's';
 
-	public function getStatuses()
+	public function getStatuses($pool)
 	{
 		$module = 'module';
 		$qb = $this->createQueryBuilder($this->_table)
 			->leftJoin($this->_table . '.module', $module)
 		;
+		$qb->where($qb->expr()->in($this->_table . '.pool', '?1'));
+		$qb->setParameter(1, $pool);
 		return $qb;
 	}
-
+	
 	public function getStatutesByModule($module)
 	{
 		$qb = $this->getStatuses();

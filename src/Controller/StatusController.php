@@ -1,6 +1,7 @@
 <?php
 namespace Agere\Status\Controller;
 
+use Agere\Core\Service\PoolAwareTrait;
 use Agere\Status\Service\StatusService;
 use Zend\Mvc\Controller\AbstractActionController;
 use	Zend\View\Model\ViewModel;
@@ -28,14 +29,18 @@ class StatusController extends AbstractActionController {
 	public $controllerRedirect = 'status';
 	public $actionRedirect = 'index';
 
+	use PoolAwareTrait;
 
 	public function indexAction()
 	{
 		//$sm = $this->getServiceManager();
 		$sm = $this->getServiceLocator();
 		$service = $sm->get($this->serviceName);
+		$userHelper = $this->plugin('user');
+		$user = $userHelper->current();
+		$pool = $user->getPool();
 		//$users = $this->getService()->getRepository()->findByRoles(1);
-		$statutes = $service->getRepository()->getStatuses();
+		$statutes = $service->getRepository()->getStatuses($pool->getId());
 
 		/** @var StatusGrid $statusGrid */
 		$statusGrid = $sm->get('StatusGrid');
@@ -62,7 +67,10 @@ class StatusController extends AbstractActionController {
 		$status = ($status = $service->find($id = (int) $route->getParam('id')))
 			? $status
 			: $service->getObjectModel();
-
+		$userHelper = $this->plugin('user');
+		$user = $userHelper->current();
+		$pool = $user->getPool();
+		$status->setPool($pool);
 		/** @var StatusForm $form */
 		$form = $fm->get(StatusForm::class);
 
