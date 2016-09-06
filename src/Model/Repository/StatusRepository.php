@@ -45,8 +45,8 @@ class StatusRepository extends EntityRepository {
 			)
 		);
 		$qb->setParameters([1 => $module, 2 => 1]);
-		//@todo Improve it 
-		$status = $this->find($qb->getQuery()->getArrayResult()[0]['id']);
+
+		$status = $qb->getQuery()->getResult()[0];
 
 		return $status;
 	}
