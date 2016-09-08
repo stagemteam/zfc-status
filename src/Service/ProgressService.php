@@ -42,7 +42,7 @@ class ProgressService extends DomainServiceAbstract {
         return $repository->getProgressItem($item, $module);
     }
 
-    public function writeProgress($item, $status) {
+    public function writeProgress($item, $status, $patient) {
         $module = $this->moduleHelper->setRealContext($item)->getModule();
         /** @var Progress $progress */
         $progress = $this->getObjectModel();
@@ -58,6 +58,7 @@ class ProgressService extends DomainServiceAbstract {
             ->setModule($module)
             ->setModifiedAt(new \DateTime('now'))
             ->setSnippet(serialize($item))
+            ->setPatient($patient)
         ;
 
         /*\Zend\Debug\Debug::dump([

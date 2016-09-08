@@ -29,10 +29,11 @@ class StatusListener implements ListenerAggregateInterface {
         $this->listeners[] = $sem->attach(StatusController::class, 'change.post', function($e) use($sm) {
             $item = $e->getTarget();
             $newStatus = $e->getParam('newStatus');
+            $patient = $e->getParam('patient');
             //$oldStatus = $e->getParam('oldStatus');
             /** @var ProgressService $progressService */
             $progressService = $sm->get('StatusProgressService');
-            $progressService->writeProgress($item, $newStatus);
+            $progressService->writeProgress($item, $newStatus, $patient);
 
         }, 100);
     }

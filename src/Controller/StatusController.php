@@ -363,6 +363,7 @@ class StatusController extends AbstractActionController {
 			//$fem = $sm->get('FormElementManager');
 			$om = $sm->get('Doctrine\ORM\EntityManager');
 			$statusService = $sm->get('StatusService');
+			$patientService = $sm->get('PatientService');
 			//$moduleService = $sm->get('EntityService');
 			//$permissionService = $sm->get('PermissionService');
 
@@ -377,6 +378,7 @@ class StatusController extends AbstractActionController {
 			$itemPost = $post->get('item');
 			$itemIdPost = $post->get('itemId');
 			$statusPost = $post->get('status');
+			$patientId = $post->get('patient');
 
 			//\Zend\Debug\Debug::dump($post); die(__METHOD__);
 
@@ -390,6 +392,7 @@ class StatusController extends AbstractActionController {
 
 			$module = $this->module()->setRealContext($item)->getModule();
 			$status = $statusService->getRepository()->findOneBy(['mnemo' => $statusPost, 'module' => $module]);
+			$patient = $patientService->getRepository()->findOneBy(['id' => $patientId]);
 
 			// @todo: Реалізувати Ініціалізатор який буде ін'єктити об'єкт форми у сервіс.
 			// 		Тут просто викликати метод $service->getForm()
@@ -423,8 +426,7 @@ class StatusController extends AbstractActionController {
 
 				if ($changer->canChangeTo($status)) {
 					$oldStatus = $changer->getOldStatus();
-					$params = ['newStatus' => $status, 'oldStatus' => $oldStatus];
-
+					$params = ['newStatus' => $status, 'oldStatus' => $oldStatus, 'patient' => $patient];
 					$this->getEventManager()->trigger('change', $item, $params);
 					$this->getEventManager()->trigger('change.' . $status->getMnemo(), $item, $params);
 
@@ -442,7 +444,6 @@ class StatusController extends AbstractActionController {
 						$this->entity()->isNew($item),
 						$this->entity()->isManaged($item)]);
 					die(__METHOD__.__LINE__);*/
-
 					$this->getEventManager()->trigger('change.post', $item, $params);
 					$this->getEventManager()->trigger('change.' . $status->getMnemo() . '.post', $item, $params);
 					/*\Zend\Debug\Debug::dump([

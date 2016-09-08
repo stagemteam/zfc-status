@@ -58,8 +58,20 @@ class ProgressGrid extends AbstractGrid implements ObjectManagerAwareInterface {
 		$col->setWidth(3);
 		$grid->addColumn($col);
 
+		$col = new Column\Select('mnemo', 'module');
+		$col->setLabel('Модуль');
+		$col->setTranslationEnabled();
+		$col->setWidth(2);
+		$grid->addColumn($col);
 
-        $colType = new Type\DateTime();
+		$colType = new Type\DateTime(
+			'Y-m-d H:i:s',
+			\IntlDateFormatter::MEDIUM,
+			\IntlDateFormatter::MEDIUM
+		);
+		$colType->setSourceTimezone('UTC');
+		$colType->setOutputTimezone('Europe/Kiev');
+        //$colType = new Type\DateTime();
         $col = new Column\Select('modifiedAt', 'statusProgress');
         $col->setLabel('Дата');
         $col->setTranslationEnabled();

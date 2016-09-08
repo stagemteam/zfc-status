@@ -43,3 +43,8 @@ Agere\Status\Model\Progress:
       joinColumn:
         name: moduleId
         referencedColumnName: id
+    patient:
+      targetEntity: Agere\Patient\Model\Patient
+      joinColumn:
+        name: patientId
+        referencedColumnName: id

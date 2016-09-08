@@ -109,24 +109,24 @@ class Statusable extends AbstractPlugin
      * @param Form|Fieldset $form
      * @param $item
      */
-    public function apply($form, $item)
+    public function apply($form, $item, $patient)
     {
         foreach ($form as $element) {
             if ($element instanceof Fieldset) {
                 $fieldset = $element;
                 if ($fieldset instanceof ButtonFieldset) {
-                    $this->attachButtons($fieldset, $item);
+                    $this->attachButtons($fieldset, $item, $patient);
                 } else {
                     $method = 'get' . ucfirst($fieldset->getName());
                     if (method_exists($item, $method)) { // @todo: Реалізувати перевірку на основі related form InvoiceProductGrid::prepareColumns()
-                        $this->apply($fieldset, $item->{$method}());
+                        $this->apply($fieldset, $item->{$method}(), $patient);
                     }
                 }
             }
         }
     }
 
-    protected function attachButtons($fieldset, $item)
+    protected function attachButtons($fieldset, $item, $patient)
     {
         $url = $this->getUrl();
         $changer = $this->getStatusChanger();
@@ -149,6 +149,7 @@ class Statusable extends AbstractPlugin
                             'status' => $workflow->getMnemo(),
                             'item' => $itemClass,
                             'itemId' => $item->getId(),
+                            'patient' => $patient->getId()
                         ]),
                         'data-action' => $url->fromRoute('default', [
                             'controller' => 'status',

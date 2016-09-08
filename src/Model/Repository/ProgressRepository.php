@@ -34,4 +34,27 @@ class ProgressRepository extends EntityRepository {
         return $qb;
     }
 
+    public function getProgressByPatient($patientId) {
+        $u = 'user';
+        $s = 'status';
+        $m = 'module';
+        $p = 'patient';
+
+        $qb = $this->createQueryBuilder($this->_alias)
+            ->leftJoin($this->_alias . '.user', $u)
+            ->leftJoin($this->_alias . '.module', $m)
+            ->leftJoin($this->_alias . '.status', $s)
+            ->leftJoin($this->_alias . '.patient', $p)
+            ->orderBy($this->_alias. '.modifiedAt', 'DESC')
+        ;
+        $qb->where(
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->_alias . '.patient', '?1')
+            )
+        );
+
+        $qb->setParameters([1 => $patientId]);
+        return $qb;
+    }
+
 }

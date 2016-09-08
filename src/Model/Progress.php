@@ -70,6 +70,14 @@ class Progress {
     protected $module;
 
     /**
+     * @var Module
+     *
+     * @ORM\ManyToOne(targetEntity="Agere\Patient\Model\Patient")
+     * @ORM\JoinColumn(name="patientId", referencedColumnName="id")
+     */
+    protected $patient;
+
+    /**
      * @param mixed $id
      */
     public function setId($id)
@@ -195,6 +203,25 @@ class Progress {
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @return Module
+     */
+    public function getPatient()
+    {
+        return $this->patient;
+    }
+
+    /**
+     * @param Module $patient
+     * @return Progress
+     */
+    public function setPatient($patient)
+    {
+        $this->patient = $patient;
+
+        return $this;
     }
 
 }
