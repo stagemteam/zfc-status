@@ -15,7 +15,7 @@ use ZfcDatagrid\Column\Style;
 use ZfcDatagrid\Column\Type;
 use ZfcDatagrid\Action;
 
-use Agere\Grid\Block\AbstractGrid;
+use Agere\ZfcDataGrid\Block\AbstractGrid;
 
 class StatusGrid extends AbstractGrid implements ObjectManagerAwareInterface {
 
@@ -26,56 +26,60 @@ class StatusGrid extends AbstractGrid implements ObjectManagerAwareInterface {
 
     public function init() {
 
-        /** @var ProductRepository $repository */
         $grid = $this->getDataGrid();
-        $route = $this->getRouteMatch();
-        $view = $this->getViewRenderer();
-
         $grid->setId('status');
         $grid->setTitle('Статусы');
+        $grid->setRendererName('jqGrid');
 
-        $colId = new Column\Select('id', 'status');
-        $colId->setIdentity();
-        $grid->addColumn($colId);
+        $colId = $this->add([
+            'name' => 'Select',
+            'construct' => ['id', 'status'],
+            'identity' => true,
+        ])->getDataGrid()->getColumnByUniqueId('status_id');
 
+        /* $this->add([
+             'name' => 'Select',
+             'construct' => ['id', 'material'],
+             'label' => 'Номер приема',
+             'width' => 1,
+             'formatters' => [
+                 [
+                     'name' => 'Link',
+                     'link' => ['href' => '/material-category/edit', 'placeholder_column' => $colId] // special config
+                 ],
+             ],
+             'identity' => false,
+         ]);*/
 
-        $deleteUrl = $view->url($route->getMatchedRouteName(), [
-            'controller' => $route->getParam('controller'),
-            'action' => 'delete'
+        $this->add([
+            'name' => 'Select',
+            'construct' => ['name', 'status'],
+            'label' => 'Статус',
+            'translation_enabled' => true,
+            'width' => 2,
+            'formatters' => [
+                [
+                    'name' => 'Link',
+                    'link' => ['href' => '/status/edit', 'placeholder_column' => $colId] // special config
+                ],
+            ],
         ]);
-        $massAction = new Action\Mass();
-        $massAction->setTitle('Удалить');
-        $massAction->setLink($deleteUrl);
-        $grid->addMassAction($massAction);
 
-        $editUrl = $view->url($route->getMatchedRouteName(), [
-            'controller' => $route->getParam('controller'),
-            'action' => 'edit'
+        $this->add([
+            'name' => 'Select',
+            'construct' => ['mnemo', 'status'],
+            'label' => 'Мнемо',
+            'translation_enabled' => true,
+            'width' => 2,
         ]);
-        $formatter = <<<FORMATTER
-function (value, options, rowObject) {
-	return '<a href="{$editUrl}/' + rowObject.status_id + '" >' + value + '</a>';
-}
-FORMATTER;
 
-        $col = new Column\Select('name', 'status');
-        $col->setLabel('Статус');
-        $col->setTranslationEnabled();
-        $col->setWidth(2);
-        $col->setRendererParameter('formatter', $formatter, 'jqGrid');
-        $grid->addColumn($col);
-
-        $col = new Column\Select('mnemo', 'status');
-        $col->setLabel('Мнемо');
-        $col->setTranslationEnabled();
-        $col->setWidth(2);
-        $grid->addColumn($col);
-
-        $col = new Column\Select('namespace', 'module');
-        $col->setLabel('Entity');
-        $col->setTranslationEnabled();
-        $col->setWidth(2);
-        $grid->addColumn($col);
+        $this->add([
+            'name' => 'Select',
+            'construct' => ['namespace', 'module'],
+            'label' => 'Entity',
+            'translation_enabled' => true,
+            'width' => 2,
+        ]);
 
         return $grid;
     }

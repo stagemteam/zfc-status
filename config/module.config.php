@@ -3,6 +3,9 @@ namespace Agere\Status;
 
 return array(
 
+	'assetic_configuration' => require_once 'assets.config.php',
+
+
 	'assets_bundle' => [
 		'assets' => [
 			'Agere' => [
