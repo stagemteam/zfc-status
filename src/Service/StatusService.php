@@ -57,7 +57,7 @@ class StatusService extends DomainServiceAbstract {
 	
 	
 	public function getStatusAutomaticallyByModule() {
-		$module = $this->getModule();
+		//$module = $this->getModule();
 		$status = $this->getRepository()->getStatus();
 		
 		return $status;

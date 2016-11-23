@@ -60,7 +60,7 @@ AgereStatusButton = {
 				alert(data.message);
 			} else {
 				// @todo: Реалізувати підтягування контенту через ajax, щоб уникнути зайве перезавантаження сторінки
-				window.location.reload();
+				//window.location.reload();
 
 				elm.trigger('status.change', data);
 			}
