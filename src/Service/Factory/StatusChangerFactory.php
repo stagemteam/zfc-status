@@ -50,10 +50,10 @@ class StatusChangerFactory implements FactoryInterface {
 
 		//\Zend\Debug\Debug::dump($pm->get('user')->isAdmin()); die(__METHOD__);
 
-		if (!$cpm->get('user')->isAdmin()) {
+		/*if (!$cpm->get('user')->isAdmin()) {
 			$tree = $permissionService->getHumanReadablePermissionTree($module, $user);
 			$changer->setPermissionTree($tree[$module->getId()]);
-		}
+		}*/
 
 		if ($changer instanceof ObjectManagerAwareInterface) {
 			$changer->setObjectManager($om);
