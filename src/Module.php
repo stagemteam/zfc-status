@@ -14,7 +14,7 @@ class Module
         $eventManager = $e->getTarget()->getEventManager();
         $sm = $e->getApplication()->getServiceManager();
 
-        $eventManager->attach((new Listener\StatusListener())->setServiceLocator($sm));
+        //$eventManager->attach((new Listener\StatusListener())->setServiceLocator($sm));
 
     }
 

@@ -2,7 +2,7 @@
 namespace Agere\Status\Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Agere\Core\Model\DomainAwareTrait;
+use Popov\ZfcCore\Model\DomainAwareTrait;
 
 /**
  * Status

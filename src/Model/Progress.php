@@ -11,9 +11,9 @@ namespace Agere\Status\Model;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Agere\Core\Model\DomainAwareTrait;
-use Agere\Module\Model\Module;
-use Agere\User\Model\User;
+use Popov\ZfcCore\Model\DomainAwareTrait;
+use Popov\ZfcEntity\Model\Module;
+use Popov\ZfcUser\Model\User;
 
 /**
  * @ORM\Entity(repositoryClass="Agere\Status\Model\Repository\StatusProgressRepository")
@@ -44,7 +44,7 @@ class Progress {
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="Agere\User\Model\User")
+     * @ORM\ManyToOne(targetEntity="Popov\ZfcUser\Model\User")
      * @ORM\JoinColumn(name="userId", referencedColumnName="id")
      */
     protected $user;

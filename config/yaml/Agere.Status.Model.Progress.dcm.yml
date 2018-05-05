@@ -28,7 +28,7 @@ Agere\Status\Model\Progress:
        unsigned: true
   manyToOne:
     user:
-        targetEntity: Agere\User\Model\User
+        targetEntity: Popov\ZfcUser\Model\User
         cascade: ["persist"]
         joinColumn:
           name: userId
@@ -39,7 +39,7 @@ Agere\Status\Model\Progress:
         name: statusId
         referencedColumnName: id
     module:
-      targetEntity: Agere\Module\Model\Module
+      targetEntity: Popov\ZfcEntity\Model\Module
       joinColumn:
         name: moduleId
         referencedColumnName: id

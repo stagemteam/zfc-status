@@ -54,7 +54,7 @@ Agere\Status\Model\Status:
         comment: Цвет
   manyToOne:
     module:
-      targetEntity: Agere\Module\Model\Module
+      targetEntity: Popov\ZfcEntity\Model\Module
       inversedBy: status
       joinColumn:
         name: moduleId

@@ -5,7 +5,7 @@ use Agere\Permission\Service\AbstractEntityService;
 //use Magere\Logs\Event\Logs as LogsEvent;
 use Agere\Status\Model\Status;
 
-use Agere\Core\Service\DomainServiceAbstract;
+use Popov\ZfcCore\Service\DomainServiceAbstract;
 
 class StatusService extends DomainServiceAbstract {
 

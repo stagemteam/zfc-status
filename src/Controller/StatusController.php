@@ -1,7 +1,7 @@
 <?php
 namespace Agere\Status\Controller;
 
-use Agere\Core\Service\PoolAwareTrait;
+use Popov\ZfcCore\Service\PoolAwareTrait;
 use Agere\Status\Service\StatusService;
 use Zend\Mvc\Controller\AbstractActionController;
 use	Zend\View\Model\ViewModel;

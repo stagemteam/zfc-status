@@ -1,7 +1,7 @@
 <?php
 namespace Agere\Status\Service;
 
-use Agere\Core\Service\DomainServiceAbstract;
+use Popov\ZfcCore\Service\DomainServiceAbstract;
 use Agere\Module\Controller\Plugin\ModulePlugin;
 use Agere\Status\Model\Repository\ProgressRepository;
 use Agere\Status\Model\Progress;
