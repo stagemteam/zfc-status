@@ -28,5 +28,11 @@
     "psr-4": {
       "Popov\\ZfcStatus\\": "src/"
     }
+  },
+  "extra": {
+    "zf": {
+      "component": "Popov\\ZfcStatus",
+      "config-provider": "Popov\\ZfcStatus\\ConfigProvider"
+    }
   }
 }
