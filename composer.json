@@ -1,34 +1,32 @@
 {
-  "name": "agerecompany/zfc-status",
-  "description": "Status Module for ZF2",
+  "name": "popov/zfc-status",
+  "description": "Status Module for ZF3",
   "type": "library",
   "license": "MIT",
   "keywords": [
-    "user",
     "status",
-    "agere"
+    "stagem"
   ],
   "authors": [
     {
-      "name": "Sergiy Popov",
-      "email": "popow.sergiy@gmail.com",
-      "homepage": "http://agere.com.ua/",
+      "name": "Serhii Popov",
+      "email": "popow.serhii@gmail.com",
+      "homepage": "http://stagem.com.ua/",
       "role": "Developer"
     },
     {
       "name": "Vlad Kozak",
       "email": "vlad.gem.typ@gmail.com",
-      "homepage": "http://agere.com.ua/",
+      "homepage": "http://stagem.com.ua/",
       "role": "Developer"
     }
   ],
-  "minimum-stability": "stable",
   "require": {
     "php": ">=5.5"
   },
   "autoload": {
     "psr-4": {
-      "Agere\\Status\\": "src/"
+      "Popov\\ZfcStatus\\": "src/"
     }
   }
 }
