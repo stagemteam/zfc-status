@@ -6,35 +6,40 @@
  * Time: 20:02
  */
 
-namespace Agere\Status\Listener;
+namespace Popov\ZfcStatus\Listener;
 
+use DateTime;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
-
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
+use Popov\ZfcStatus\Controller\StatusController;
+use Zend\EventManager\Event;
+use Popov\ZfcStatus\Model\StatusedAtAwareInterface;
 
-use Agere\Status\Controller\StatusController;
-use Agere\Status\Service\ProgressService;
+class StatusListener //implements ListenerAggregateInterface
+{
+    //use ListenerAggregateTrait;
+    //use ServiceLocatorAwareTrait;
 
-class StatusListener implements ListenerAggregateInterface {
+    /*public function attach(EventManagerInterface $events)
+    {
+        $sharedEventManager = $events->getSharedManager(); // shared events manager
 
-    use ListenerAggregateTrait;
-    use ServiceLocatorAwareTrait;
+        $this->listeners[] = $sharedEventManager->attach(StatusController::class, 'change.post',
+            function(Event $e) {
+                $item = $e->getTarget();
+                if ($item instanceof StatusedAtAwareInterface) {
+                    $item->setStatusedAt(new DateTime('now'));
+                }
+            }, 110);
+    }*/
 
-    public function attach(EventManagerInterface $events) {
-        $sm = $this->getServiceLocator();
-        $sem = $events->getSharedManager(); // shared events manager
-
-        $this->listeners[] = $sem->attach(StatusController::class, 'change.post', function($e) use($sm) {
-            $item = $e->getTarget();
-            $newStatus = $e->getParam('newStatus');
-            $patient = $e->getParam('patient');
-            //$oldStatus = $e->getParam('oldStatus');
-            /** @var ProgressService $progressService */
-            $progressService = $sm->get('StatusProgressService');
-            $progressService->writeProgress($item, $newStatus, $patient);
-
-        }, 100);
+    public function postChange($e)
+    {
+        $item = $e->getTarget();
+        if ($item instanceof StatusedAtAwareInterface) {
+            $item->setStatusedAt(new DateTime('now'));
+        }
     }
 }

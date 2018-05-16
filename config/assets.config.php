@@ -1,14 +1,11 @@
 <?php
-namespace Agere\Status;
+namespace Popov\ZfcStatus;
 
 return [
     'default' => [
         'assets' => [
-            //'@cartDefault_css',
-            '@statusDefault_js',
-        ],
-        'options' => [
-            'mixin' => true,
+            //'@grid_css',
+            '@status_js',
         ],
     ],
 
@@ -16,7 +13,7 @@ return [
         __NAMESPACE__ => [
             'root_path' => __DIR__ . '/../view/assets',
             'collections' => [
-                'statusDefault_js' => [
+                'status_js' => [
                     'assets' => [
                         'js/status-button.js',
                     ],

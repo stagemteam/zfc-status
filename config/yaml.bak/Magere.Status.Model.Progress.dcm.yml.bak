@@ -1,0 +1,45 @@
+Popov\ZfcStatus\Model\Progress:
+  type: entity
+  repositoryClass: Popov\ZfcStatus\Model\Repository\ProgressRepository
+  table: status_progress
+  options:
+    comment: Status Progress
+  fields:
+    id:
+      id: true
+      type: integer
+      generator:
+        strategy: IDENTITY
+      options:
+        unsigned: true
+    modifiedAt:
+     name: modifiedAt
+     type: datetime
+    snippet:
+      type: text
+      unique: false
+      nullable: false
+      length: 65535
+      options:
+        default: ''
+    itemId:
+      type: integer
+      options:
+       unsigned: true
+  manyToOne:
+    user:
+      targetEntity: Magere\Users\Model\Users
+      cascade: ["persist"]
+      joinColumn:
+        name: userId
+        referencedColumnName: id
+    status:
+      targetEntity: Popov\ZfcStatus\Model\Status
+      joinColumn:
+        name: statusId
+        referencedColumnName: id
+    module:
+      targetEntity: Magere\Entity\Model\Entity
+      joinColumn:
+        name: moduleId
+        referencedColumnName: id

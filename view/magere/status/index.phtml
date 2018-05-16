@@ -1,0 +1,70 @@
+<?php
+$controller = $this->layout()->route->getParam('controller');
+$this->plugin('translate')->setTranslatorTextDomain('Magere\Permission');
+?>
+
+<div class="header-content-layout form-header">
+	<ul class="line1">
+		<li>
+			<?=$this->buttons('addItem', ['add' => [
+				'href'			=> $this->url('default', [
+					'controller'	=> $controller,
+					'action'		=> 'add'
+				]),
+				'controller'	=> $controller,
+				'action'		=> 'add',
+			]])?>
+		</li>
+	</ul>
+</div>
+<div class="body-content-layout">
+	<div class="panel-fixed">
+
+	<!-- content -->
+	<table class="table-content tableborder width ankets_tbl">
+		<thead class="CmsHeader">
+		<tr>
+			<td><?=$fields['id']?></td>
+			<td><?=$fields['status']?></td>
+			<td><?=$fields['category']?></td>
+			<td></td>
+		</tr>
+		</thead>
+	</table>
+
+</div>
+<table class="cmsMainText ankets_tbl tableborder table-content table-info-row">
+	<tbody>
+	<?php foreach ($items as $item) { ?>
+		<tr>
+			<td><?=$item[0]->getId()?></td>
+			<td>
+				<a href="<?=$this->url('default/id', [
+					'controller'	=> $controller,
+					'action'		=> 'edit',
+					'id'			=> $item[0]->getId()
+				])?>"><?=$item[0]->getName()?></a>
+			</td>
+			<td><?=$this->translate($item['mnemo'])?></td>
+			<td>
+				<input type="hidden" name="id" value="<?=$item[0]->getId()?>">
+				<?php
+				$buttonsArgs['delete'] = [
+					'href'			=> $this->url('default/id', [
+						'controller'	=> $controller,
+						'action'		=> 'delete',
+						'id'			=> $item[0]->getId()
+					]),
+					'class'			=> $controller,
+					'controller'	=> $controller,
+					'action'		=> 'delete',
+				];
+
+				echo $this->buttons('deleteItem', $buttonsArgs);
+				?>
+			</td>
+		</tr>
+	<?php } ?>
+	</tbody>
+</table>
+</div>

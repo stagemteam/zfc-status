@@ -1,0 +1,106 @@
+<?php
+namespace Popov\ZfcStatus\Service;
+
+use Popov\Core\Service\DomainServiceAbstract;
+use Magere\Entity\Controller\Plugin\ModulePlugin;
+use Popov\ZfcStatus\Model\Repository\ProgressRepository;
+use Popov\ZfcStatus\Model\Progress;
+
+class ProgressService extends DomainServiceAbstract
+{
+    protected $entity = Progress::class;
+
+    protected $user;
+
+    /** @var ModulePlugin */
+    protected $modulePlugin;
+
+    public function __construct($user, ModulePlugin $modulePlugin)
+    {
+        $this->user = $user;
+        $this->modulePlugin = $modulePlugin;
+    }
+
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function getModulePlugin()
+    {
+        return $this->modulePlugin;
+    }
+
+    public function getEntityPlugin()
+    {
+        return $this->getModulePlugin()->getEntityPlugin();
+    }
+
+    /**
+     * Get progress for one or several items
+     *
+     * @param object|array $item Object or objects set
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getProgress($item)
+    {
+        //$entityPlugin = $this->getEntityPlugin();
+        $modulePlugin = $this->getModulePlugin();
+        $moduleService = $modulePlugin->getModuleService();
+
+        $items = is_array($item) ? $item : [$item];
+        $moduleNames = [];
+        foreach ($items as $item) {
+            $moduleNames[] = $modulePlugin->setRealContext($item)->getContext();
+        }
+
+        $modules = $moduleService->getRepository()->findBy(['namespace' => $moduleNames]);
+
+        //$module = $this->modulePlugin->setRealContext($item)->getModule();
+
+        /** @var ProgressRepository $repository */
+        $repository = $this->getRepository();
+
+        //return $repository->getItemProgress($item, $module);
+        return $repository->getItemsProgress($items, $modules);
+    }
+
+    public function writeProgress($item, $status)
+    {
+        $module = $this->modulePlugin->setRealContext($item)->getModule();
+        /** @var Progress $progress */
+        $progress = $this->getObjectModel();
+        if (!$item->getId()) { // @todo Щоб уникнути не бажаного flush реалізувати single_table або розібратись у Statusable (від Taggable, Sortable etc.)
+            if (!$this->getObjectManager()->contains($item)) {
+                $this->getObjectManager()->persist($item);
+            }
+            $this->getObjectManager()->flush();
+            // \Zend\Debug\Debug::dump([get_class($item), $item->getId()]); die(__METHOD__);
+        }
+        $progress->setItemId($item->getId());
+        $progress->setUser($this->user)
+            ->setStatus($status)
+            ->setModule($module)
+            ->setModifiedAt(new \DateTime('now'))
+            ->setSnippet(serialize($item));
+        /*\Zend\Debug\Debug::dump([
+            $progress->getId() . '$progress->getId()',
+            $this->user->getId() . '$this->user->getId()',
+            $item->getId() . '$item->getId()',
+            $status->getId() . '$status->getId()',
+            $module->getId() . '$module->getId()',
+
+        ]); die(__METHOD__);*/
+        $this->getObjectManager()->persist($progress);
+
+        return $this;
+    }
+
+}

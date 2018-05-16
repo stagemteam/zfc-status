@@ -1,0 +1,28 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Popov Cart Module\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-04-11 09:35+0300\n"
+"PO-Revision-Date: 2018-04-11 09:35+0300\n"
+"Last-Translator: \n"
+"Language-Team: Popov Company <dev@agere.com.ua>\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: translate;_;translatePlural:1,2\n"
+"X-Poedit-Basepath: .\n"
+"X-Generator: Poedit 2.0.5\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../src/Magere/Status/Service/Progress/StatusContext.php:58
+msgid "Status change"
+msgstr "Статус змінено"
+
+#: ../src/Magere/Status/Service/Progress/StatusContext.php:64
+#, php-format
+msgid "%s from %s to %s"
+msgstr "%s з %s на %s"

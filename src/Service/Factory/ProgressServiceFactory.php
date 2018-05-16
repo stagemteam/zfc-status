@@ -2,26 +2,31 @@
 /**
  * Progress Status Service Factory
  *
- * @category Agere
- * @package Agere_Status
- * @author Popov Sergiy <popov@agere.com.ua>
+ * @category Popov
+ * @package Popov_ZfcStatus
+ * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 04.02.15 10:30
  */
 
-namespace Agere\Status\Service\Factory;
+namespace Popov\ZfcStatus\Service\Factory;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Agere\Status\Service\ProgressService;
+use Interop\Container\ContainerInterface;
+use Zend\Mvc\Controller\PluginManager;
+use Popov\ZfcStatus\Service\ProgressService;
+use Magere\Entity\Controller\Plugin\ModulePlugin;
 
 class ProgressServiceFactory {
 
-	public function __invoke(ServiceLocatorInterface $sm) {
-		//$vhm = $sm->get('ViewHelperManager');
-		$cpm = $sm->get('ControllerPluginManager');
-		$user = $cpm->get('user');
-		$module = $cpm->get('module');
+    public function __invoke(ContainerInterface $container)
+    {
+        /** @var PluginManager $cpm */
+		$cpm = $container->get('ControllerPluginManager');
+        $userService = $container->get('UserService');
+		//$user = $cpm->get('user');
+        /** @var ModulePlugin $modulePlugin */
+		$modulePlugin = $cpm->get('module');
 
-		return (new ProgressService($user->current(), $module));
+		return (new ProgressService($userService->getCurrent(), $modulePlugin));
 	}
 
 }

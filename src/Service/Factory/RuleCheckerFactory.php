@@ -2,24 +2,24 @@
 /**
  * Rule Handler Factory
  *
- * @category Agere
- * @package Agere_Status
- * @author Popov Sergiy <popov@agere.com.ua>
+ * @category Popov
+ * @package Popov_ZfcStatus
+ * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 23.03.2016 15:38
  */
-namespace Agere\Status\Service\Factory;
+namespace Popov\ZfcStatus\Service\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 
-use Agere\Entity\Service\EntityService as ModuleService;
-use Agere\Status\Service\StatusService;
+use Magere\Entity\Service\EntityService as ModuleService;
+use Popov\ZfcStatus\Service\StatusService;
 use Magere\Permission\Service\PermissionService;
 
-use Agere\Entity\Model\Entity as Module;
-use Agere\Status\Service\RuleChecker;
-use Agere\Current\Plugin\Current;
+use Magere\Entity\Model\Entity as Module;
+use Popov\ZfcStatus\Service\RuleChecker;
+use Popov\Current\Plugin\Current;
 
 class RuleCheckerFactory implements FactoryInterface {
 
@@ -41,7 +41,7 @@ class RuleCheckerFactory implements FactoryInterface {
 		/** @var Module $module */
 		//$module = $moduleService->getOneItem($current('module'), 'namespace');
 		// Nothing change. Current module relative path not allowed
-		//$module = $moduleService->getOneItem('Magere\Status', 'namespace');
+		//$module = $moduleService->getOneItem('Popov\ZfcStatus', 'namespace');
 
 		//\Zend\Debug\Debug::dump($defaultStatus->getId()); die(__METHOD__);
 

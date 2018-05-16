@@ -2,17 +2,17 @@
 /**
  * Statusable plugin factory
  *
- * @category Agere
- * @package Agere_Status
- * @author Popov Sergiy <popov@agere.com.ua>
+ * @category Popov
+ * @package Popov_ZfcStatus
+ * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 04.02.15 10:30
  */
-namespace Agere\Status\Controller\Plugin\Factory;
+namespace Popov\ZfcStatus\Controller\Plugin\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 //use Zend\View\HelperPluginManager;
-use Agere\Status\Controller\Plugin\Statusable;
+use Popov\ZfcStatus\Controller\Plugin\Statusable;
 
 class StatusableFactory
 {
@@ -27,11 +27,11 @@ class StatusableFactory
         $module = $cpm->get('module');
         //$route = $current('route');
         $changer = $sm->get('StatusChanger');
-        $moduleService = $sm->get('ModuleService');
+        //$moduleService = $sm->get('EntityService');
 
-        return (new Statusable($changer))
+        return (new Statusable($changer))->setTranslator($sm->get('translator'))
             ->injectUrl($url)
             ->injectConfig($config)
-            ->injectModule($module);
+            ->injectModulePlugin($module);
     }
 }

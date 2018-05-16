@@ -3,24 +3,29 @@
  * Plugin which add status buttons to form.
  * This allow add status buttons to different fieldsets in form
  *
- * @category Agere
- * @package Agere_Status
- * @author Popov Sergiy <popov@agere.com.ua>
+ * @category Popov
+ * @package Popov_ZfcStatus
+ * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 26.03.16 19:37
  */
-namespace Agere\Status\Controller\Plugin;
+namespace Popov\ZfcStatus\Controller\Plugin;
 
+use Popov\ZfcStatus\Model\Status;
 use Zend\Stdlib\Exception;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\Mvc\Controller\Plugin\Url;
 use Zend\Form\Form;
 use Zend\Form\Fieldset;
-use Agere\Entity\Controller\Plugin\Module as ModulePlugin;
-use Agere\Status\Service\StatusChanger;
-use Agere\Status\Form\ButtonFieldset;
+use Zend\I18n\Translator\TranslatorAwareInterface;
+use Zend\I18n\Translator\TranslatorAwareTrait;
+use Magere\Entity\Controller\Plugin\ModulePlugin as ModulePlugin;
+use Popov\ZfcStatus\Service\StatusChanger;
+use Popov\ZfcStatus\Form\ButtonFieldset;
 
 class Statusable extends AbstractPlugin
 {
+    use TranslatorAwareTrait;
+
     /** @var Url */
     protected $url;
 
@@ -62,7 +67,7 @@ class Statusable extends AbstractPlugin
         return $this->config;
     }
 
-    public function injectModule($modulePlugin)
+    public function injectModulePlugin($modulePlugin)
     {
         $this->modulePlugin = $modulePlugin;
 
@@ -75,6 +80,11 @@ class Statusable extends AbstractPlugin
     public function getModulePlugin()
     {
         return $this->modulePlugin;
+    }
+
+    public function getCurrentPlugin()
+    {
+        return $this->getModulePlugin()->getCurrentPlugin();
     }
 
     public function getStatusChanger()
@@ -91,16 +101,29 @@ class Statusable extends AbstractPlugin
     {
         $changer = $this->getStatusChanger();
         $modulePlugin = $this->getModulePlugin();
+        $entityPlugin = $modulePlugin->getEntityPlugin();
         #$itemName = get_class($item);
         #$moduleName = $current->currentModule($itemName);
         //\Zend\Debug\Debug::dump(get_class($url)); die(__METHOD__);
         #$module = $moduleService->getOneItem($moduleName, 'namespace');
         //$module = $modulePlugin->setRealContext($item)->getModule();
 
-        $module = $modulePlugin->setContext($item)->getModule();
-        $status = $changer->setModule($module)->setItem($item)->getOldStatus();
+        $entity = $entityPlugin->setContext($item)->getEntity();
+        $status = $changer->setEntity($entity)->setItem($item)->getOldStatus();
+
+        //\Zend\Debug\Debug::dump(get_class($item));
+        //\Zend\Debug\Debug::dump($module->getId());
+        //\Zend\Debug\Debug::dump($module->getMnemo());
+        //\Zend\Debug\Debug::dump(get_class($item));
 
         return $status;
+    }
+
+    public function hasStatus($item)
+    {
+        $changer = $this->getStatusChanger();
+
+        return $changer->hasItemWithStatus($item);
     }
 
     /**
@@ -109,57 +132,125 @@ class Statusable extends AbstractPlugin
      * @param Form|Fieldset $form
      * @param $item
      */
-    public function apply($form, $item, $patient)
+    //public function apply($form, $item) // видалив $item так як це зайвий параметр, достатньо передавати форму з уже підв'язаними (bind) об'єктом
+    public function apply($form)
     {
         foreach ($form as $element) {
+            //\Zend\Debug\Debug::dump(get_class($element)); //die(__METHOD__);
             if ($element instanceof Fieldset) {
+            //if ($element) {
                 $fieldset = $element;
                 if ($fieldset instanceof ButtonFieldset) {
-                    $this->attachButtons($fieldset, $item, $patient);
+                    //\Zend\Debug\Debug::dump([get_class($form), get_class($form->getObject()), __METHOD__]); //die(__METHOD__);
+                    $this->attachButtons($fieldset, $form->getObject());
+                } elseif ($form->getName() === $fieldset->getName()) {
+                    $this->apply($fieldset);
                 } else {
                     $method = 'get' . ucfirst($fieldset->getName());
-                    if (method_exists($item, $method)) { // @todo: Реалізувати перевірку на основі related form InvoiceProductGrid::prepareColumns()
-                        $this->apply($fieldset, $item->{$method}(), $patient);
+                    //\Zend\Debug\Debug::dump($method);
+                    //\Zend\Debug\Debug::dump(method_exists($item, $method));
+                    //if (method_exists($item, $method)) { // @todo: Реалізувати перевірку на основі related form InvoiceProductGrid::prepareColumns()
+                    if (method_exists($item = $form->getObject(), $method)) {
+                        //$this->apply($fieldset, (($item->{$method}()) ?: $fieldset->getObject()));
+                        $this->apply($fieldset);
                     }
                 }
             }
         }
     }
 
-    protected function attachButtons($fieldset, $item, $patient)
+    protected function attachButtons($fieldset, $item)
     {
-        $url = $this->getUrl();
-        $changer = $this->getStatusChanger();
+        //$modulePlugin = $this->getModulePlugin();
+        //$entityPlugin = $modulePlugin->getEntityPlugin();
+        //$url = $this->getUrl();
+        $changer = $this->getStatusChanger()->reset();
         $status = $this->getStatus($item);
-        $itemClass = get_class($item);
+        //$itemClass = $entityPlugin->getRealDoctrineClass($item);
 
         foreach ($status->getWorkflow() as $workflow) {
+            //\Zend\Debug\Debug::dump(($workflow->getMnemo()));
             if ($changer->canChangeTo($workflow)/* && $changer->checkRule($workflow->getRule())*/) {
-                $fieldset->add([
+                $fieldset->add($this->getButtonConfig($workflow, $item));
+                /*$fieldset->add([
                     'name' => 'status-' . $workflow->getMnemo(),
                     'type' => 'button',
                     'options' => [
-                        'label' => $workflow->getName(),
+                        'label' => $this->__('button:' . $workflow->getMnemo(), $workflow->getName(), $itemClass),
                     ],
                     'attributes' => [
-                        'value' => $workflow->getName(),
-                        'class' => 'btn btn-primary btn-xs btn-changeStatus',
+                        'value' => 'button:' . $workflow->getMnemo(),
+                        'class' => 'btn btn-primary btn-changeStatus',
                         //'data-status' => $workflow->getMnemo(),
                         'data-status' => json_encode([
                             'status' => $workflow->getMnemo(),
                             'item' => $itemClass,
                             'itemId' => $item->getId(),
-                            'patient' => $patient->getId()
                         ]),
                         'data-action' => $url->fromRoute('default', [
                             'controller' => 'status',
                             'action' => 'change',
                         ]),
                     ],
-                ]);
+                ]);*/
             }
         }
     }
+
+    public function getButtonConfig(Status $status, $item): array
+    {
+        static $classes = [];
+
+        $url = $this->getUrl();
+        $modulePlugin = $this->getModulePlugin();
+        $entityPlugin = $modulePlugin->getEntityPlugin();
+        $itemClass = isset($classes[$class = get_class($item)])
+            ? $classes[$class]
+            : $classes[$class] = $entityPlugin->getRealDoctrineClass($item);
+
+        $attributes = [
+            'name' => 'status-' . $status->getMnemo(),
+            'type' => 'button',
+            'options' => [
+                'label' => $this->__('button:' . $status->getMnemo(), $status->getName(), $itemClass),
+            ],
+            'attributes' => [
+                'value' => 'button:' . $status->getMnemo(),
+                'class' => 'btn btn-primary btn-changeStatus',
+                //'data-status' => $workflow->getMnemo(),
+                'data-status' => json_encode([
+                    'status' => $status->getMnemo(),
+                    'item' => $itemClass,
+                    'itemId' => $item->getId(),
+                ]),
+                'data-action' => $url->fromRoute('default', [
+                    'controller' => 'status',
+                    'action' => 'change',
+                ]),
+            ],
+        ];
+
+        return $attributes;
+    }
+
+    public function __($message, $alternative, $context)
+    {
+        /*if ($context instanceof TranslatorAwareInterface
+            && $context->hasTranslator()
+            && $context->isTranslatorEnabled()
+        ) {
+            die(__METHOD__);
+            $translator = $context->getTranslator();
+            return $translator->translate($message);
+        }*/
+        $currentPlugin = $this->getCurrentPlugin();
+        $translator = $this->getTranslator();
+        //\Zend\Debug\Debug::dump($currentPlugin->currentModule($context));//die(__METHOD__);
+        return $translator->translate($message, $currentPlugin->currentModule($context));
+
+        //return $alternative;
+    }
+
 
     public function __invoke()
     {

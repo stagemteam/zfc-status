@@ -2,115 +2,151 @@
 /**
  * Status workflow role
  *
- * @category Agere
- * @package Agere_Status
- * @author Popov Sergiy <popov@agere.com.ua>
+ * @category Popov
+ * @package Popov_ZfcStatus
+ * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 17.03.2016 19:31
  */
-namespace Agere\Status\Model;
+
+namespace Popov\ZfcStatus\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Popov\ZfcCore\Model\DomainAwareTrait;
 
-class Rule {
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="status_rule")
+ */
+class Rule
+{
+    use DomainAwareTrait;
 
-	use DomainAwareTrait;
+    /**
+     * @var integer
+     * @ORM\Id
+     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    protected $id;
 
-	protected $id;
+    /**
+     * @var string
+     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     */
+    protected $name;
 
-	protected $name;
+    /**
+     * @var string
+     * @ORM\Column(name="conditions", type="text", nullable=false)
+     */
+    protected $conditions;
 
-	protected $conditions;
+    /**
+     * The higher the number, the higher the priority
+     *
+     * @var integer
+     * @ORM\Column(name="priority", type="integer", nullable=false)
+     */
+    protected $priority = 0;
 
-	protected $priority;
+    /**
+     * @ORM\OneToOne(targetEntity="Status", inversedBy="rule")
+     * @ORM\JoinColumn(name="statusId", referencedColumnName="id")
+     */
+    protected $status;
 
-	protected $status;
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
-	//protected $allowedStatuses;
+    /**
+     * @param mixed $id
+     * @return Rule
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
 
-	/**
-	 * @return mixed
-	 */
-	public function getId() {
-		return $this->id;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param mixed $id
-	 * @return Rule
-	 */
-	public function setId($id) {
-		$this->id = $id;
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-		return $this;
-	}
+    /**
+     * @param mixed $name
+     * @return Rule
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
 
-	/**
-	 * @return mixed
-	 */
-	public function getName() {
-		return $this->name;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param mixed $name
-	 * @return Rule
-	 */
-	public function setName($name) {
-		$this->name = $name;
+    /**
+     * @return mixed
+     */
+    public function getConditions()
+    {
+        return $this->conditions;
+    }
 
-		return $this;
-	}
+    /**
+     * @param mixed $conditions
+     * @return Rule
+     */
+    public function setConditions($conditions)
+    {
+        $this->conditions = $conditions;
 
-	/**
-	 * @return mixed
-	 */
-	public function getConditions() {
-		return $this->conditions;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param mixed $conditions
-	 * @return Rule
-	 */
-	public function setConditions($conditions) {
-		$this->conditions = $conditions;
+    /**
+     * @return mixed
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
 
-		return $this;
-	}
+    /**
+     * @param mixed $priority
+     * @return Rule
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
 
-	/**
-	 * @return mixed
-	 */
-	public function getPriority() {
-		return $this->priority;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param mixed $priority
-	 * @return Rule
-	 */
-	public function setPriority($priority) {
-		$this->priority = $priority;
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
 
-		return $this;
-	}
+    /**
+     * @param mixed $status
+     * @return Rule
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
 
-	/**
-	 * @return mixed
-	 */
-	public function getStatus() {
-		return $this->status;
-	}
-
-	/**
-	 * @param mixed $status
-	 * @return Rule
-	 */
-	public function setStatus($status) {
-		$this->status = $status;
-
-		return $this;
-	}
-
+        return $this;
+    }
 }

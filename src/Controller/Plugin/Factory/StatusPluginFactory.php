@@ -2,15 +2,16 @@
 /**
  * Status plugin factory
  *
- * @category Agere
- * @package Agere_Status
- * @author Popov Sergiy <popov@agere.com.ua>
+ * @category Popov
+ * @package Popov_ZfcStatus
+ * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 11.05.16 2:38
  */
-namespace Agere\Status\Controller\Plugin\Factory;
+namespace Popov\ZfcStatus\Controller\Plugin\Factory;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Agere\Status\Controller\Plugin\StatusPlugin;
+use Popov\ZfcStatus\Controller\Plugin\StatusPlugin;
+use Popov\ZfcStatus\Service\Progress\StatusContext;
 
 class StatusPluginFactory
 {
@@ -18,8 +19,14 @@ class StatusPluginFactory
     {
         $sm = $cpm->getServiceLocator();
         $fem = $sm->get('FormElementManager');
+        $statusService = $sm->get('StatusService');
+        $progressService = $sm->get('ProgressService');
+        $statusChanger = $sm->get('StatusChanger');
+        $contextClosure = function() use ($sm) {
+            return $sm->get(StatusContext::class);
+        };
 
-        return (new StatusPlugin())
+        return (new StatusPlugin($statusService, $progressService, $statusChanger, $contextClosure))
             ->setFormElementManager($fem);
     }
 }

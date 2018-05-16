@@ -2,12 +2,12 @@
 /**
  * Global status buttons panel
  *
- * @category Agere
- * @package Agere_Status
- * @author Popov Sergiy <popov@agere.com.ua>
+ * @category Popov
+ * @package Popov_ZfcStatus
+ * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 19.03.2016 23:36
  */
-namespace Agere\Status\Form;
+namespace Popov\ZfcStatus\Form;
 
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;

@@ -1,23 +1,22 @@
 <?php
 /**
  *
- * @category Agere
- * @package Agere_Status
+ * @category Popov
+ * @package Popov_ZfcStatus
  * @author Vlad Kozak <vk@agere.com.ua>
  * @datetime: 29.03.2016 23:14
  */
-namespace Agere\Status\Model;
+namespace Popov\ZfcStatus\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Popov\ZfcCore\Model\DomainAwareTrait;
-use Agere\Entity\Model\Entity as Module;
-use User\Model\Entity\User as Users;
-//use User\Model\Entity\User as Users;
+use Popov\Core\Model\DomainAwareTrait;
+use Magere\Entity\Model\Entity as Module;
+use Magere\Users\Model\Users as Users;
 
 /**
- * @ORM\Entity(repositoryClass="Agere\Status\Model\Repository\StatusProgressRepository")
+ * @ORM\Entity(repositoryClass="Popov\ZfcStatus\Model\Repository\StatusProgressRepository")
  * @ORM\Table(name="status_progress")
  */
 class Progress {
@@ -43,7 +42,15 @@ class Progress {
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="Agere\Status\Model\Status")
+     * @var Users
+     *
+     * @ORM\ManyToOne(targetEntity="Magere\Users\Model\Users")
+     * @ORM\JoinColumn(name="userId", referencedColumnName="id")
+     */
+    protected $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Popov\ZfcStatus\Model\Status")
      * @ORM\JoinColumn(name="statusId", referencedColumnName="id")
      */
     protected $status;
@@ -57,19 +64,10 @@ class Progress {
     /**
      * @var Module
      *
-     * @ORM\ManyToOne(targetEntity="Agere\Entity\Model\Entity")
+     * @ORM\ManyToOne(targetEntity="Magere\Entity\Model\Entity")
      * @ORM\JoinColumn(name="moduleId", referencedColumnName="id")
      */
     protected $module;
-
-    /**
-     * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Agere\User\Model\User")
-     * @ORM\JoinColumn(name="userId", referencedColumnName="id")
-     */
-    protected $user;
-
 
     /**
      * @param mixed $id
@@ -77,6 +75,8 @@ class Progress {
     public function setId($id)
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -93,6 +93,8 @@ class Progress {
     public function setItemId($itemId)
     {
         $this->itemId = $itemId;
+
+        return $this;
     }
 
     /**
@@ -105,14 +107,17 @@ class Progress {
 
     /**
      * @param \DateTime $modifiedAt
+     * @return $this
      */
     public function setModifiedAt($modifiedAt)
     {
         $this->modifiedAt = $modifiedAt;
+
+        return $this;
     }
 
     /**
-     * @return \DateTime
+     * @return \Popov\ZfcStatus\Model\datetime
      */
     public function getModifiedAt()
     {
@@ -120,15 +125,18 @@ class Progress {
     }
 
     /**
-     * @param \Agere\Entity\Model\Entity $module
+     * @param \Magere\Entity\Model\Entity $module
+     * @return $this
      */
     public function setModule($module)
     {
         $this->module = $module;
+
+        return $this;
     }
 
     /**
-     * @return \Agere\Entity\Model\Entity
+     * @return \Magere\Entity\Model\Entity
      */
     public function getModule()
     {
@@ -141,6 +149,8 @@ class Progress {
     public function setSnippet($snippet)
     {
         $this->snippet = $snippet;
+
+        return $this;
     }
 
     /**
@@ -157,6 +167,8 @@ class Progress {
     public function setStatus($status)
     {
         $this->status = $status;
+
+        return $this;
     }
 
     /**
@@ -168,20 +180,21 @@ class Progress {
     }
 
     /**
-     * @param \Agere\Status\Model\User $user
+     * @param \Magere\Users\Model\Users $user
      */
     public function setUser($user)
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
     /**
-     * @return \Agere\Status\Model\User
+     * @return \Magere\Users\Model\Users
      */
     public function getUser()
     {
         return $this->user;
     }
+
 }

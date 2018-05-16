@@ -1,96 +1,22 @@
 <?php
-namespace Agere\Status\Service;
+namespace Popov\ZfcStatus\Service;
 
-use Agere\Permission\Service\AbstractEntityService;
-//use Magere\Logs\Event\Logs as LogsEvent;
-use Agere\Status\Model\Status;
-
+use Popov\ZfcStatus\Model\Status;
 use Popov\ZfcCore\Service\DomainServiceAbstract;
+use Popov\ZfcEntity\Model\Entity;
 
 class StatusService extends DomainServiceAbstract {
 
 	protected $entity = Status::class;
-	protected $repository = Status::class;
 
-	protected $_repositoryName = 'status';
-	protected $_entityAlias = 'Status';
-
-	/** @var Module */
-	protected $module;
-
-	/**
-	 * @return Module
-	 */
-	public function getModule()
-	{
-		return $this->module;
-	}
-
-	/**
-	 * @param Module $module
-	 * @return StatusService
-	 */
-	public function setModule($module)
-	{
-		$this->module = $module;
-
-		return $this;
-	}
-	/**
-	 * @var array
-	 */
-	protected $_fields = [
-		'id'			=> '№',
-		'status'		=> 'Статус',
-		'category'		=> 'Категория',
-	];
-
-	public function save(Status $status)
-	{
-		$om = $this->getObjectManager();
-		if (!$om->contains($status)) {
-			$om->persist($status);
-		}
-		$om->flush();
-	}
-	
-	
-	
-	public function getStatusAutomaticallyByModule() {
-		//$module = $this->getModule();
-		$status = $this->getRepository()->getStatus();
-		
-		return $status;
-	}
-	
-	/*===========================Old Code===========================*/
-	public function getConfigStatuses($namespace) {
-		$config = $this->getServiceManager()->get('Config');
-		$statusMnemo = array_keys($config['status']['validation'][$namespace]);
-
-
-		//$om = $this->getObjectManager();
-
-		$repo = $this->getRepository();
-		$statuses = $repo->findBy(['mnemo' => $statusMnemo]);
-
-		/*$qb = $repo->createQueryBuilder('status');
-		$qb->where($qb->expr()->andx(
-			$qb->expr()->in('status.mnemo', '?1')
-		))->setParameter(1, $statusMnemo); // hardcode for RAZ #2*/
-		//$qb->orderBy('city.priority', 'DESC');
-		//$statuses = $qb->getQuery()->getResult();
+    /**
+     * @param Entity $entity
+     * @return mixed
+     */
+	public function getStatusesByEntity($entity) {
+        $statuses = $this->getRepository()->findBy(['entity' => $entity]);
 
 		return $statuses;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getFields()
-	{
-		return $this->_fields;
 	}
 
 	/**
@@ -100,8 +26,9 @@ class StatusService extends DomainServiceAbstract {
 	 */
 	public function getItemsCollection($entityMnemo = '', $hidden = '')
 	{
-		/** @var \Agere\Status\Model\Repository\StatusRepository $repository */
-		$repository = $this->getRepository();
+		/** @var \Popov\ZfcStatus\Model\Repository\StatusRepository $repository */
+		$repository = $this->getRepository($this->_repositoryName);
+
 		return $repository->findAll($entityMnemo, $hidden);
 	}
 
@@ -112,8 +39,8 @@ class StatusService extends DomainServiceAbstract {
 	 */
 	public function getItems($entityMnemo = '', $mnemo = 'all')
 	{
-		/** @var \Magere\Status\Model\Repository\StatusRepository $repository */
-		$repository = $this->getRepository();
+		/** @var \Popov\ZfcStatus\Model\Repository\StatusRepository $repository */
+		$repository = $this->getRepository($this->_repositoryName);
 
 		return $repository->findItems($entityMnemo, $mnemo);
 	}
@@ -125,7 +52,7 @@ class StatusService extends DomainServiceAbstract {
 	 */
 	public function getOneItem($id, $field = 'id')
 	{
-		/** @var \Magere\Status\Model\Repository\StatusRepository $repository */
+		/** @var \Popov\ZfcStatus\Model\Repository\StatusRepository $repository */
 		$repository = $this->getRepository($this->_repositoryName);
 
 		return $repository->findOneItem($id, $field);
@@ -138,7 +65,7 @@ class StatusService extends DomainServiceAbstract {
 	 */
 	public function getOneItemByName($name, $namespace)
 	{
-		/** @var \Magere\Status\Model\Repository\StatusRepository $repository */
+		/** @var \Popov\ZfcStatus\Model\Repository\StatusRepository $repository */
 		$repository = $this->getRepository($this->_repositoryName);
 
 		return $repository->findOneItemByName($name, $namespace);
@@ -151,7 +78,7 @@ class StatusService extends DomainServiceAbstract {
 	 */
 	public function getOneItemByMnemo($statusMnemo, $entityMnemo)
 	{
-		/** @var \Magere\Status\Model\Repository\StatusRepository $repository */
+		/** @var \Popov\ZfcStatus\Model\Repository\StatusRepository $repository */
 		$repository = $this->getRepository($this->_repositoryName);
 
 		return $repository->findOneItemByMnemo($statusMnemo, $entityMnemo);
@@ -164,7 +91,7 @@ class StatusService extends DomainServiceAbstract {
 	 * @deprecated
 	 */
 	//public function save($data, $oneItem, $locator) {
-	public function saveOld($data, $oneItem) {
+	public function save($data, $oneItem) {
 		$isNew = false;
 		// Set default values
 		if (is_null($oneItem->getId())) {

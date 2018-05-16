@@ -1,28 +1,17 @@
 <?php
-namespace Agere\Status;
+namespace Popov\ZfcStatus;
 
 return array(
 
-	'assetic_configuration' => require_once 'assets.config.php',
+    'event_manager' => require_once 'listener.config.php',
 
+    'assetic_configuration' => require_once 'assets.config.php',
 
-	'assets_bundle' => [
-		'assets' => [
-			'Agere' => [
-				//'Agere\Spare\Controller\Spare' => [
-				//'spare' => [
-				'js' => [
-					//'media/js/cart.js',
-					__DIR__ . '/../view/public/js/status-button.js',
-				],
-				//'css' => [
-				//	__DIR__ . '/../view/public/css/'
-				//]
-				//],
-			]
-			//'media' => ['img', 'fonts']
-		]
-	],
+    'progress' => [
+        __NAMESPACE__ => [
+            'context' => Service\Progress\StatusContext::class,
+        ]
+    ],
 
 	'controllers' => [
 		'invokables' => [
@@ -37,7 +26,7 @@ return array(
 			'validatable' => Controller\Plugin\Validatable::class,
 		],
 		'factories' => [
-			Controller\Plugin\StatusPlugin::class => Controller\Plugin\Factory\StatusPluginFactory::class,
+            Controller\Plugin\StatusPlugin::class => Controller\Plugin\Factory\StatusPluginFactory::class,
 			Controller\Plugin\Statusable::class => Controller\Plugin\Factory\StatusableFactory::class,
 			Controller\Plugin\Validatable::class => Controller\Plugin\Factory\ValidatableFactory::class,
 		],
@@ -50,9 +39,9 @@ return array(
 	],
 
 	'view_manager' => [
-		/*'template_map' => [
-			'status/partial/buttons' => __DIR__ . '/../view/magere/status/partial/buttons.phtml',
-		],*/
+		'template_map' => [
+			'status/progress' => __DIR__ . '/../view/magere/status/progress.phtml',
+		],
 		'template_path_stack' => [
 			__DIR__ . '/../view',
 		],
@@ -63,65 +52,127 @@ return array(
 			Form\ButtonFieldset::class => Form\ButtonFieldset::class,
 		],
 		//'factories' => [
-		//	'Magere\Status\Form\ButtonFieldset' => Form\Factory\ButtonFieldsetFactory::class,
+		//	'Popov\ZfcStatus\Form\ButtonFieldset' => Form\Factory\ButtonFieldsetFactory::class,
 		//],
+        'shared' => [
+            Form\ButtonFieldset::class => false
+        ]
 	],
 
 	'service_manager' => array(
 		'aliases' => [
 			'Status' => Model\Status::class,
-			'StatusProgress' => Model\Progress::class,
+			//'StatusProgress' => Model\Progress::class,
 			'StatusService'	=> Service\StatusService::class,
-			'StatusProgressService' => Service\ProgressService::class,
+			//'StatusProgressService' => Service\ProgressService::class,
 			'StatusProgressGrid' => Block\Grid\ProgressGrid::class,
-			'StatusGrid' => Block\Grid\StatusGrid::class,
 
 			'StatusChanger' => Service\StatusChanger::class,
 			'RuleChecker' => Service\RuleChecker::class,
-		],
-		'invokables' => [
-			Model\Progress::class => Model\Progress::class,
-			Model\Status::class => Model\Status::class,
-			Service\StatusService::class => Service\StatusService::class,
-			//Service\ProgressService::class => Service\ProgressService::class,
-		],
+        ],
+        'invokables' => [
+            //Model\Progress::class => Model\Progress::class,
+            //Service\ProgressService::class => Service\ProgressService::class,
+            Service\Progress\StatusContext::class => Service\Progress\StatusContext::class,
+        ],
 
 		'factories' => [
-			Service\ProgressService::class => Service\Factory\ProgressServiceFactory::class,
-			'Agere\Status\Service\StatusChanger' => Service\Factory\StatusChangerFactory::class,
-			'Agere\Status\Service\RuleChecker' => Service\Factory\RuleCheckerFactory::class,
+			//Service\ProgressService::class => Service\Factory\ProgressServiceFactory::class,
+			Service\StatusChanger::class => Service\Factory\StatusChangerFactory::class,
+			Service\RuleChecker::class => Service\Factory\RuleCheckerFactory::class,
+            //Service\Progress\StatusContext::class => Service\Progress\Factory\StatusContextFactory::class,
 
-			/*'Agere\Status\Service\StatusService' => function ($sm) {
+
+            /*'Popov\ZfcStatus\Service\StatusService' => function ($sm) {
 				$em = $sm->get('Doctrine\ORM\EntityManager');
-				$service = new \Agere\Status\Service\StatusService();
-				$service->setServiceManager($sm);
+				$service = \Magere\Popov\Service\Factory\Helper::create('status/status', $em);
+				$service->setServiceLocator($sm);
 
 				return $service;
 			},*/
 		],
+        'delegators' => [
+            Service\Progress\StatusContext::class => [
+                \Stagem\ZfcTranslator\Service\Factory\TranslatorDelegatorFactory::class
+            ]
+        ],
 
 		'shared' => [
-			Model\Progress::class => false,
+            //Model\Progress::class => false,
 			Service\StatusChanger::class => false, // System can have several StatusChanger
 		]
 	),
 
-	// Doctrine config
-	'doctrine' => array(
-		'driver' => array(
-			'orm_default' => array(
-				'drivers' => array(
-					__NAMESPACE__ . '\Model' => __NAMESPACE__ . '_driver',
-				)
-			),
+    'translator' => [
+        'translation_file_patterns' => [
+            [
+                'type'     => 'gettext',
+                'base_dir' => __DIR__ . '/../language',
+                'pattern'  => '%s.mo',
+                'text_domain' => __NAMESPACE__,
+            ],
+        ],
+    ],
 
-			__NAMESPACE__ . '_driver' => array(
-				'class' => 'Doctrine\ORM\Mapping\Driver\YamlDriver',
-				'cache' => 'array',
-				'extension' => '.dcm.yml',
-				'paths' => array(__DIR__ . '/yaml')
-			),
+    'doctrine' => [
+        'driver' => [
+            __NAMESPACE__ . '_driver' => [
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => [__DIR__ . '/../src//Model'],
+            ],
+            'orm_default' => [
+                'drivers' => [
+                    __NAMESPACE__ . '\Model' => __NAMESPACE__ . '_driver',
+                ],
+            ],
+        ],
+    ],
 
+	// @link http://adam.lundrigan.ca/2012/07/quick-and-dirty-zf2-zend-navigation/
+	// All navigation-related configuration is collected in the 'navigation' key
+	'navigation' => array(
+		// The DefaultNavigationFactory we configured in (1) uses 'default' as the sitemap key
+		'default' => array(
+			// And finally, here is where we define our page hierarchy
+			'status' => array(
+				'module' => 'status',
+				'label' => 'Главная',
+				'route' => 'default',
+				'controller' => 'index',
+				'action' => 'index',
+				'pages' => array(
+					'settings-index' => array(
+						'label'      => 'Настройки',
+						'route'      => 'default',
+						'controller' => 'settings',
+						'action'     => 'index',
+						'pages' => array(
+							'status-index' => array(
+								'label' => 'Статусы',
+								'route' => 'default',
+								'controller' => 'status',
+								'action' => 'index',
+								'pages' => array(
+									'status-add' => array(
+										'label' => 'Добавить',
+										'route' => 'default',
+										'controller' => 'status',
+										'action' => 'add',
+									),
+									'status-edit' => array(
+										'label' => 'Редактировать',
+										'route' => 'default/id',
+										'controller' => 'status',
+										'action' => 'edit',
+									),
+								),
+							),
+						),
+					),
+				),
+			),
 		),
 	),
+
 );

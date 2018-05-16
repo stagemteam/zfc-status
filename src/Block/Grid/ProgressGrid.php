@@ -2,12 +2,12 @@
 /**
  * Status Progress Grid Block
  *
- * @category Agere
- * @package Agere_Status
- * @author Popov Sergiy <popov@agere.com.ua>
+ * @category Popov
+ * @package Popov_ZfcStatus
+ * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 25.12.2015 21:31
  */
-namespace Agere\Status\Block\Grid;
+namespace Popov\ZfcStatus\Block\Grid;
 
 use DoctrineModule\Persistence\ProvidesObjectManager;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
@@ -17,9 +17,9 @@ use ZfcDatagrid\Column;
 use ZfcDatagrid\Column\Style;
 use ZfcDatagrid\Column\Type;
 
-use Agere\Barcode\Column\Formatter;
-use Agere\Spare\Model\Repository\ProductRepository;
-use Agere\ZfcDataGrid\Block\AbstractGrid;
+use Popov\Barcode\Column\Formatter;
+use Popov\Spare\Model\Repository\ProductRepository;
+use Popov\ZfcDataGrid\Block\AbstractGrid;
 
 class ProgressGrid extends AbstractGrid implements ObjectManagerAwareInterface {
 
@@ -29,69 +29,49 @@ class ProgressGrid extends AbstractGrid implements ObjectManagerAwareInterface {
 	protected $backButtonTitle = '';
 
 	public function init() {
-
+		/** @var ProductRepository $repository */
 		$grid = $this->getDataGrid();
+		$route = $this->getRouteMatch();
+		$view = $this->getViewRenderer();
+
 		$grid->setId('statusProgress_grid');
 		$grid->setTitle('История статусов');
 		$grid->setRendererName('jqGrid');
 
-		$colId = $this->add([
-			'name' => 'Select',
-			'construct' => ['id', 'statusProgress'],
-			'identity' => true,
-		])->getDataGrid()->getColumnByUniqueId('statusProgress_id');
+		$colId = new Column\Select('id', 'statusProgress');
+		$colId->setIdentity();
+		$grid->addColumn($colId);
 
-		/* $this->add([
-             'name' => 'Select',
-             'construct' => ['id', 'material'],
-             'label' => 'Номер приема',
-             'width' => 1,
-             'formatters' => [
-                 [
-                     'name' => 'Link',
-                     'link' => ['href' => '/material-category/edit', 'placeholder_column' => $colId] // special config
-                 ],
-             ],
-             'identity' => false,
-         ]);*/
+		$col = new Column\Select('name', 'status');
+		$col->setLabel('Статус');
+		$col->setTranslationEnabled();
+		//$col->setUserSortDisabled(true);
+		//$col->setUserFilterDisabled(true);
+		//$col->setRowClickDisabled(true);
+        $col->setWidth(2);
+		$grid->addColumn($col);
 
-		$this->add([
-			'name' => 'Select',
-			'construct' => ['name', 'status'],
-			'label' => 'Статус',
-			'translation_enabled' => true,
-			'width' => 2,
-		]);
+		$col = new Column\Select('email', 'user');
+		$col->setLabel('Пользователь');
+		$col->setTranslationEnabled();
+		//$col->addStyle(new Style\Align(Style\Align::$LEFT));
+		$col->setWidth(3);
+		$grid->addColumn($col);
 
-		$this->add([
-			'name' => 'Select',
-			'construct' => ['email', 'user'],
-			'label' => 'Пользователь',
-			'translation_enabled' => true,
-			'width' => 2,
-		]);
 
-		$this->add([
-			'name' => 'Select',
-			'construct' => ['mnemo', 'module'],
-			'label' => 'Модуль',
-			'translation_enabled' => true,
-			'width' => 2,
-		]);
-
-		$this->add([
-			'name' => 'Select',
-			'construct' => ['modifiedAt', 'statusProgress'],
-			'label' => 'Дата',
-			'translation_enabled' => true,
-			'width' => 2,
-			'type' => ['name' => 'DateTime'],
-		]);
+        $colType = new Type\DateTime();
+        $col = new Column\Select('modifiedAt', 'statusProgress');
+        $col->setLabel('Дата');
+        $col->setTranslationEnabled();
+        $col->setType($colType);
+        //$col->addStyle(new Style\Align(Style\Align::$LEFT));
+        $col->setWidth(2);
+        $grid->addColumn($col);
 
 		return $grid;
 	}
 
-	/*public function initToolbar() {
+	public function initToolbar() {
 		$grid = $this->getDataGrid();
 		$toolbar = $this->getToolbar();
 		$route = $this->getRouteMatch();
@@ -110,6 +90,6 @@ class ProgressGrid extends AbstractGrid implements ObjectManagerAwareInterface {
 		#; // action: what to do with selected items
 
 		return $toolbar;
-	}*/
+	}
 
 }

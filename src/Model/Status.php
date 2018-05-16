@@ -1,172 +1,112 @@
 <?php
-namespace Agere\Status\Model;
+
+namespace Popov\ZfcStatus\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Popov\ZfcCore\Model\DomainAwareTrait;
+use Popov\ZfcEntity\Model\Entity;
+use Stagem\ZfcPool\Model\Pool;
 
 /**
- * Status
+ * @ORM\Entity()
+ * @ORM\Table(name="status")
  */
-class Status {
-
+class Status
+{
     use DomainAwareTrait;
 
     /**
      * @var integer
+     * @ORM\Id
+     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var string
+     * @ORM\Column(name="name", type="string", length=255, nullable=false)
      */
     private $name;
 
     /**
      * @var string
+     * @ORM\Column(name="mnemo", type="string", length=32, nullable=false)
      */
     private $mnemo;
 
     /**
      * @var integer
      */
-    private $moduleId;
+    #private $entityId;
 
     /**
-     * @var string
+     * @var integer
+     * @ORM\Column(name="hidden", type="smallint", length=1, nullable=false)
      */
-    private $hidden;
+    private $hidden = 0;
 
     /**
-     * @var string
+     * @var integer
+     * @ORM\Column(name="automatically", type="smallint", length=1, nullable=true)
      */
-    private $remove;
+    private $automatically = 0;
 
     /**
+     * HEX color code, for example #ffffff
+     *
      * @var string
-     */
-    private $automatically;
-
-    /**
-     * @var string
+     * @ORM\Column(name="color", type="string", length=7, nullable=true)
      */
     private $color;
 
     /**
-     * @var \Agere\Module\Model\Module
+     * @var Entity
+     * @ORM\ManyToOne(targetEntity="Popov\ZfcEntity\Model\Entity", cascade={"persist", "remove"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="entityId", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * })
      */
-    private $module;
+    private $entity;
 
-    /** @var Status[] */
-    private $workflow;
-
-    /** @var Rule */
-    private $rule;
-
-    /** @var Progress */
-    private $progress;
-
-    /** @var Status[] */
+    /**
+     * @var Pool
+     * @ORM\ManyToOne(targetEntity="Stagem\ZfcPool\Model\Pool", cascade={"persist"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="poolId", referencedColumnName="id", nullable=true)
+     * })
+     */
     private $pool;
 
     /**
-     * Constructor
+     * @var \Doctrine\Common\Collections\Collection|Status[]
+     * @ORM\ManyToMany(targetEntity="Status", inversedBy="workflow")
+     * @ORM\JoinTable(
+     *  name="status_workflow",
+     *  joinColumns={
+     *      @ORM\JoinColumn(name="statusId", referencedColumnName="id")
+     *  },
+     *  inverseJoinColumns={
+     *      @ORM\JoinColumn(name="nextStatusId", referencedColumnName="id")
+     *  })
      */
-    public function __construct() {
+    private $workflow;
+
+    /**
+     * @var Rule
+     * @ORM\OneToOne(targetEntity="Rule", mappedBy="status")
+     */
+    private $rule;
+
+    public function __construct()
+    {
         $this->workflow = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->progress = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-
-    /**
-     * @param string $automatically
-     */
-    public function setAutomatically($automatically)
-    {
-        $this->automatically = $automatically;
     }
 
     /**
-     * @return string
-     */
-    public function getAutomatically()
-    {
-        return $this->automatically;
-    }
-
-    /**
-     * @param string $color
-     */
-    public function setColor($color)
-    {
-        $this->color = $color;
-    }
-
-    /**
-     * @return string
-     */
-    public function getColor()
-    {
-        return $this->color;
-    }
-
-    /**
-     * @param \Agere\Module\Model\Module $module
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-    }
-
-    /**
-     * @return \Agere\Module\Model\Module
-     */
-    public function getModule()
-    {
-        return $this->module;
-    }
-
-    /**
-     * @param int $moduleId
-     */
-    public function setModuleId($moduleId)
-    {
-        $this->moduleId = $moduleId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getModuleId()
-    {
-        return $this->moduleId;
-    }
-
-    /**
-     * @param string $hidden
-     */
-    public function setHidden($hidden)
-    {
-        $this->hidden = $hidden;
-    }
-
-    /**
-     * @return string
-     */
-    public function getHidden()
-    {
-        return $this->hidden;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return int
+     * Get id
+     *
+     * @return integer
      */
     public function getId()
     {
@@ -174,30 +114,21 @@ class Status {
     }
 
     /**
-     * @param string $mnemo
-     */
-    public function setMnemo($mnemo)
-    {
-        $this->mnemo = $mnemo;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMnemo()
-    {
-        return $this->mnemo;
-    }
-
-    /**
+     * Set name
+     *
      * @param string $name
+     * @return Status
      */
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
+     * Get name
+     *
      * @return string
      */
     public function getName()
@@ -206,19 +137,138 @@ class Status {
     }
 
     /**
-     * @param string $remove
+     * Set mnemo
+     *
+     * @param string $mnemo
+     * @return Status
      */
-    public function setRemove($remove)
+    public function setMnemo($mnemo)
     {
-        $this->remove = $remove;
+        $this->mnemo = $mnemo;
+
+        return $this;
     }
 
     /**
+     * Get mnemo
+     *
      * @return string
      */
-    public function getRemove()
+    public function getMnemo()
     {
-        return $this->remove;
+        return $this->mnemo;
+    }
+
+    /**
+     * Set hidden
+     *
+     * @param string $hidden
+     * @return Status
+     */
+    public function setHidden($hidden)
+    {
+        $this->hidden = $hidden;
+
+        return $this;
+    }
+
+    /**
+     * Get hidden
+     *
+     * @return string
+     */
+    public function getHidden()
+    {
+        return $this->hidden;
+    }
+
+    /**
+     * Set automatically
+     *
+     * @param string $automatically
+     * @return Status
+     */
+    public function setAutomatically($automatically)
+    {
+        $this->automatically = $automatically;
+
+        return $this;
+    }
+
+    /**
+     * Get automatically
+     *
+     * @return string
+     */
+    public function getAutomatically()
+    {
+        return $this->automatically;
+    }
+
+    /**
+     * Set color
+     *
+     * @param string $color
+     * @return Status
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * Get color
+     *
+     * @return string
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * Set entity
+     *
+     * @param Entity $entity
+     * @return Status
+     */
+    public function setEntity(Entity $entity = null)
+    {
+        $this->entity = $entity;
+
+        return $this;
+    }
+
+    /**
+     * Get entity
+     *
+     * @return Entity
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
+
+    /**
+     * @return Pool
+     */
+    public function getPool(): Pool
+    {
+        return $this->pool;
+    }
+
+    /**
+     * @param Pool $pool
+     * @return Status
+     */
+    public function setPool(Pool $pool): Status
+    {
+        $this->pool = $pool;
+
+        return $this;
     }
 
     /**
@@ -258,43 +308,4 @@ class Status {
 
         return $this;
     }
-
-    /**
-     * @return Progress
-     */
-    public function getProgress()
-    {
-        return $this->progress;
-    }
-
-    /**
-     * @param Progress $progress
-     * @return Status
-     */
-    public function setProgress($progress)
-    {
-        $this->progress = $progress;
-
-        return $this;
-    }
-
-    /**
-     * @return Status[]
-     */
-    public function getPool()
-    {
-        return $this->pool;
-    }
-
-    /**
-     * @param Status[] $pool
-     * @return Status
-     */
-    public function setPool($pool)
-    {
-        $this->pool = $pool;
-
-        return $this;
-    }
-
 }

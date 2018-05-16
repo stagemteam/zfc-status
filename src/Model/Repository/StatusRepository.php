@@ -1,56 +1,14 @@
 <?php
-namespace Agere\Status\Model\Repository;
+namespace Popov\ZfcStatus\Model\Repository;
 
-use Agere\Base\App\Exception;
 use Doctrine\ORM\Query\ResultSetMapping;
 use	Doctrine\ORM\Query\ResultSetMappingBuilder;
-use Doctrine\ORM\EntityRepository;
-use Zend\Debug\Debug;
+use Popov\ZfcCore\Model\Repository\EntityRepository;
 
 class StatusRepository extends EntityRepository {
 
 	protected $_table = 'status';
 	protected $_alias = 's';
-
-	public function getStatuses($pool)
-	{
-		$module = 'module';
-		$qb = $this->createQueryBuilder($this->_table)
-			->leftJoin($this->_table . '.module', $module)
-		;
-		$qb->where($qb->expr()->in($this->_table . '.pool', '?1'));
-		$qb->setParameter(1, $pool);
-		return $qb;
-	}
-	
-	public function getStatutesByModule($module)
-	{
-		$qb = $this->getStatuses();
-		$qb->where($qb->expr()->in('module.namespace', '?1'));
-		$qb->setParameter(1, $module);
-
-		return $qb->getQuery()->getArrayResult();
-	}
-
-	public function getStatusAutomaticallyByModule($module)
-	{
-		$m = 'module';
-		$qb = $this->createQueryBuilder($this->_table)
-			->leftJoin($this->_table . '.module', $m)
-		;
-		$qb->where(
-			$qb->expr()->andX(
-				$qb->expr()->eq($m . '.namespace', '?1'),
-				$qb->expr()->eq($this->_table . '.automatically', '?2')
-			)
-		);
-		$qb->setParameters([1 => $module, 2 => 1]);
-
-		$status = $qb->getQuery()->getResult()[0];
-
-		return $status;
-	}
-
 
 
 	/**
@@ -75,9 +33,8 @@ class StatusRepository extends EntityRepository {
 	 * @param string $entityMnemo
 	 * @param null|string $hidden
 	 * @return array
-	 * @deprecated
 	 */
-	public function findAllStatuses($entityMnemo = '', $hidden = '')
+	public function findAll($entityMnemo = '', $hidden = '')
 	{
 		$rsm = new ResultSetMapping();
 
@@ -110,7 +67,7 @@ class StatusRepository extends EntityRepository {
 			ORDER BY mnemo, name";
 		$query = $this->_em->createNativeQuery($sql, $rsm);
 
-		//\Zend\Debug\Debug::dump([$sql, $entityMnemo, $hidden]); die(__METHOD__);
+		//\Zend\Debug\Debug::dump([$sql, $entityMnemo, $hidden]); //die(__METHOD__);
 
 		$query = $this->setParametersByArray($query, $data);
 

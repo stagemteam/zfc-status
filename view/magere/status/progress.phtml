@@ -1,0 +1,19 @@
+<?php //$progress = $this->viewModel()->getCurrent()->getVariable('progresses'); ?>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <td>Дата</td>
+        <td>Сотрудник</td>
+        <td>Описание</td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($this->progress as $progress) : ?>
+        <tr>
+            <td><?= $progress->getModifiedAt()->format('y/m/d H:i') ?></td>
+            <td><?= $progress->getUser()->getEmail() ?></td>
+            <td><?= $progress->getStatus()->getName() ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

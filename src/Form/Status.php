@@ -1,5 +1,5 @@
 <?php
-namespace Agere\Status\Form;
+namespace Popov\ZfcStatus\Form;
 
 use Zend\Form\Form,
 	Zend\InputFilter\Factory as InputFactory,
@@ -68,7 +68,7 @@ class Status extends Form {
 					)
 				),*/
 				array(
-					'name' => '\Magere\Agere\Validator\Db\NoRecordExists',
+					'name' => '\Magere\Popov\Validator\Db\NoRecordExists',
 					'options' => array(
 						'table' => 'status',
 						'field' => 'name',

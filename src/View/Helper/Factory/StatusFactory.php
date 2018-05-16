@@ -2,16 +2,16 @@
 /**
  * Status helper factory
  *
- * @category Agere
- * @package Agere_Status
- * @author Popov Sergiy <popov@agere.com.ua>
+ * @category Popov
+ * @package Popov_ZfcStatus
+ * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 04.02.15 10:30
  */
 
-namespace Agere\Status\View\Helper\Factory;
+namespace Popov\ZfcStatus\View\Helper\Factory;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Agere\Status\View\Helper\Status as StatusHelper;
+use Popov\ZfcStatus\View\Helper\StatusHelper as StatusHelper;
 
 class StatusFactory {
 
@@ -19,10 +19,12 @@ class StatusFactory {
 		$sm = $vhm->getServiceLocator();
 		$vhm = $sm->get('ViewHelperManager');
 
-		$translator = $vhm->get('translate');
-		$progressService = $sm->get('StatusProgressService');
+		$translator = $vhm->get('Translate');
+        $statusService = $sm->get('StatusService');
+		$progressService = $sm->get('ProgressService');
+		$statusChanger = $sm->get('StatusChanger');
 
-		return new StatusHelper($sm->get('StatusService'), $progressService, $translator);
+		return new StatusHelper($statusService, $progressService, $statusChanger, $translator);
 	}
 
 }

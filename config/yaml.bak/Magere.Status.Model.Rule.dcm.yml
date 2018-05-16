@@ -1,0 +1,28 @@
+Popov\ZfcStatus\Model\Rule:
+  type: entity
+  table: status_rule
+  options:
+    comment: Правила зміни статусів
+  fields:
+    id:
+      id: true
+      type: integer
+      generator:
+        strategy: AUTO
+      options:
+        unsigned: true
+    conditions:
+      type: text
+    priority:
+      type: integer
+      nullable: false
+      options:
+        default: 0
+        comment: Приорітет правила. Чим вище число тим вищий приорітет.
+  oneToOne:
+    status:
+      targetEntity: Popov\ZfcStatus\Model\Status
+      inversedBy: rule
+      joinColumn:
+        name: statusId
+        referencedColumnName: id
