@@ -93,7 +93,7 @@ return array(
 		],
         'delegators' => [
             Service\Progress\StatusContext::class => [
-                \Stagem\ZfcTranslator\Service\Factory\TranslatorDelegatorFactory::class
+                \Stagem\ZfcLang\Service\Factory\TranslatorDelegatorFactory::class
             ]
         ],
 

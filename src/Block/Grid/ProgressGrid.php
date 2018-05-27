@@ -32,7 +32,6 @@ class ProgressGrid extends AbstractGrid implements ObjectManagerAwareInterface {
 		/** @var ProductRepository $repository */
 		$grid = $this->getDataGrid();
 		$route = $this->getRouteMatch();
-		$view = $this->getViewRenderer();
 
 		$grid->setId('statusProgress_grid');
 		$grid->setTitle('История статусов');
