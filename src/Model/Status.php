@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Popov\ZfcCore\Model\DomainAwareTrait;
 use Popov\ZfcEntity\Model\Entity;
 use Stagem\ZfcPool\Model\Pool;
+use Stagem\ZfcPool\Model\PoolInterface;
 
 /**
  * @ORM\Entity()
@@ -71,7 +72,7 @@ class Status
 
     /**
      * @var Pool
-     * @ORM\ManyToOne(targetEntity="Stagem\ZfcPool\Model\Pool", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Stagem\ZfcPool\Model\PoolInterface", cascade={"persist"})
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="poolId", referencedColumnName="id", nullable=true)
      * })
