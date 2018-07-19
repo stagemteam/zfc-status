@@ -13,7 +13,12 @@ return array(
         ]
     ],
 
-	'controllers' => [
+    'actions' => [
+        'status' => __NAMESPACE__ . '\Action\Status',
+    ],
+
+
+    'controllers' => [
 		'invokables' => [
 			'status' => Controller\StatusController::class
 		],
@@ -38,14 +43,11 @@ return array(
 		],
 	],
 
-	'view_manager' => [
-		'template_map' => [
-			'status/progress' => __DIR__ . '/../view/magere/status/progress.phtml',
-		],
-		'template_path_stack' => [
-			__DIR__ . '/../view',
-		],
-	],
+    'view_manager' => [
+        'prefix_template_path_stack' => [
+            'status::' => __DIR__ . '/../view/status',
+        ],
+    ],
 
 	'form_elements' => [
 		'invokables' => [

@@ -21,7 +21,6 @@ class ButtonFieldset extends Fieldset /*implements InputFilterProviderInterface,
 
 	public function init() {
 		$this->setName('buttons');
-
 		// buttons will be added through statusable plugin
 	}
 

@@ -1,0 +1,24 @@
+<?php
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2018 Stagem Team
+ * This source file is subject to The MIT License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/MIT
+ *
+ * @category Stagem
+ * @package Stagem_Question
+ * @author Serhii Popov <popow.serhii@gmail.com>
+ * @license https://opensource.org/licenses/MIT The MIT License (MIT)
+ */
+$form = $this->vars('form');
+$form->setAttribute('action', $this->url('admin/default/id', [
+    'controller' => $this->current('controller'),
+    'action' => $this->current('action'),
+    'id' => (int) $form->getObject()->getId(),
+    //'lang' => $this->current('request')->getAttribute('lang'),
+]));
+?>
+<?php $form->prepare(); ?>
+<?= $this->partial('form::form', ['form' => $form]) ?>

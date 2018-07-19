@@ -1,10 +1,11 @@
 <?php
 namespace Popov\ZfcStatus\Service;
-
 use Popov\ZfcStatus\Model\Status;
+use Stagem\Product\Model\Rank;
+//use Popov\ZfcStatus\Model\Repository\StatusRepository;
 use Popov\ZfcCore\Service\DomainServiceAbstract;
 use Popov\ZfcEntity\Model\Entity;
-
+use Zend\Db;
 class StatusService extends DomainServiceAbstract {
 
 	protected $entity = Status::class;
@@ -216,4 +217,14 @@ class StatusService extends DomainServiceAbstract {
 		$event->events($class)->trigger('status.updatePermission', $this, $params);
 	}
 
+	public function edit(){
+
+    }
+    //protected $entity = Status::class;
+
+    public function getStatuses()
+    {
+        return $this->getRepository()->getStatuses();
+        //die(__CLASS__);
+    }
 }

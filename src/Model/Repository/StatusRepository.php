@@ -5,11 +5,27 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use	Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Popov\ZfcCore\Model\Repository\EntityRepository;
 
+//use Popov\ZfcCore\Model\Repository\EntityRepository;
+use Stagem\Amazon\Model\Marketplace;
+use Stagem\Product\Model\Product;
 class StatusRepository extends EntityRepository {
 
 	protected $_table = 'status';
 	protected $_alias = 's';
 
+
+    public function getStatuses()
+    {
+        $e = 'entity';
+        $p = 'marketplace';
+
+        $qb = $this->createQueryBuilder($this->_table)
+            ->leftJoin($this->_table . '.entity', $e)
+            ->leftJoin($this->_table . '.pool', $p);
+
+        //$x = $qb->getQuery()->getArrayResult();
+        return $qb;
+    }
 
 	/**
 	 * @param string|array $mnemo
@@ -237,5 +253,7 @@ class StatusRepository extends EntityRepository {
 
 		return $result;
 	}
+
+    //protected $_al = 'status';
 
 }

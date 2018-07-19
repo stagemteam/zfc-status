@@ -9,7 +9,7 @@ use Stagem\ZfcPool\Model\Pool;
 use Stagem\ZfcPool\Model\PoolInterface;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Popov\ZfcStatus\Model\Repository\StatusRepository")
  * @ORM\Table(name="status")
  */
 class Status
@@ -71,7 +71,7 @@ class Status
     private $entity;
 
     /**
-     * @var Pool
+     * @var PoolInterface
      * @ORM\ManyToOne(targetEntity="Stagem\ZfcPool\Model\PoolInterface", cascade={"persist"})
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="poolId", referencedColumnName="id", nullable=true)
@@ -254,18 +254,18 @@ class Status
 
 
     /**
-     * @return Pool
+     * @return PoolInterface
      */
-    public function getPool(): Pool
+    public function getPool()
     {
         return $this->pool;
     }
 
     /**
-     * @param Pool $pool
+     * @param PoolInterface $pool
      * @return Status
      */
-    public function setPool(Pool $pool): Status
+    public function setPool(PoolInterface $pool): Status
     {
         $this->pool = $pool;
 
