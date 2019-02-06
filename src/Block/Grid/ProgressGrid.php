@@ -86,7 +86,7 @@ class ProgressGrid extends AbstractGrid implements ObjectManagerAwareInterface {
 			#	'controller' => $route->getParam('controller'),
 			#	'action'     => 'changeStatus',
 			#]], ['group' => 'prop', 'position' => 50])
-		#; // action: what to do with selected items
+		#; // action: what to do with selected selectedItems
 
 		return $toolbar;
 	}

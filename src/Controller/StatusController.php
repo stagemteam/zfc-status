@@ -35,7 +35,7 @@ class StatusController extends AbstractActionController {
 
         return [
             'fields' => $service->getFields(),
-            'items'  => $service->getItemsCollection('', '0'),
+            'selectedItems'  => $service->getItemsCollection('', '0'),
         ];
     }
 
