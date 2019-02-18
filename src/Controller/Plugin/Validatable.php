@@ -8,7 +8,7 @@
  * @datetime: 11.05.16 2:21
  */
 
-namespace Popov\ZfcStatus\Controller\Plugin;
+namespace Stagem\ZfcStatus\Controller\Plugin;
 
 use Magere\AuthorizedPersons\Form\Validator\AuthorizedPersonCondition;
 use Zend\Form\FieldsetInterface;
@@ -24,9 +24,9 @@ use Zend\Validator\ValidatorPluginManager;
 
 use Magere\Users\Acl\Acl;
 use Magere\Entity\Service\EntityService as ModuleService;
-use Popov\ZfcStatus\Service\StatusChanger;
-use Popov\ZfcStatus\Form\ButtonFieldset;
-use Popov\ZfcStatus\Model\Status;
+use Stagem\ZfcStatus\Service\StatusChanger;
+use Stagem\ZfcStatus\Form\ButtonFieldset;
+use Stagem\ZfcStatus\Model\Status;
 use Magere\Permission\Service\PermissionService;
 use Magere\Users\Controller\Plugin\User as UserPlugin;
 use Popov\Simpler\Plugin\SimplerPlugin;

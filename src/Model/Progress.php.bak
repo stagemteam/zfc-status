@@ -6,7 +6,7 @@
  * @author Vlad Kozak <vk@agere.com.ua>
  * @datetime: 29.03.2016 23:14
  */
-namespace Popov\ZfcStatus\Model;
+namespace Stagem\ZfcStatus\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,7 +16,7 @@ use Magere\Entity\Model\Entity as Module;
 use Magere\Users\Model\Users as Users;
 
 /**
- * @ORM\Entity(repositoryClass="Popov\ZfcStatus\Model\Repository\StatusProgressRepository")
+ * @ORM\Entity(repositoryClass="Stagem\ZfcStatus\Model\Repository\StatusProgressRepository")
  * @ORM\Table(name="status_progress")
  */
 class Progress {
@@ -50,7 +50,7 @@ class Progress {
     protected $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Popov\ZfcStatus\Model\Status")
+     * @ORM\ManyToOne(targetEntity="Stagem\ZfcStatus\Model\Status")
      * @ORM\JoinColumn(name="statusId", referencedColumnName="id")
      */
     protected $status;
@@ -117,7 +117,7 @@ class Progress {
     }
 
     /**
-     * @return \Popov\ZfcStatus\Model\datetime
+     * @return \Stagem\ZfcStatus\Model\datetime
      */
     public function getModifiedAt()
     {

@@ -13,8 +13,8 @@
  * @license https://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
-use Popov\ZfcStatus\Controller\StatusController;
-use Popov\ZfcStatus\Listener\StatusListener;
+use Stagem\ZfcStatus\Controller\StatusController;
+use Stagem\ZfcStatus\Listener\StatusListener;
 
 return [
     'definitions' => [

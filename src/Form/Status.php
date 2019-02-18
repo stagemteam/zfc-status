@@ -1,5 +1,5 @@
 <?php
-namespace Popov\ZfcStatus\Form;
+namespace Stagem\ZfcStatus\Form;
 
 use Zend\Form\Form,
 	Zend\InputFilter\Factory as InputFactory,

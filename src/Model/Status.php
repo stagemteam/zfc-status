@@ -1,20 +1,23 @@
 <?php
 
-namespace Popov\ZfcStatus\Model;
+namespace Stagem\ZfcStatus\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Popov\ZfcCore\Model\DomainAwareTrait;
 use Popov\ZfcEntity\Model\Entity;
-use Stagem\ZfcPool\Model\Pool;
 use Stagem\ZfcPool\Model\PoolInterface;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Stagem\ZfcStatus\Model\Repository\StatusRepository")
  * @ORM\Table(name="status")
  */
 class Status
 {
     use DomainAwareTrait;
+
+    const MNEMO = 'status';
+
+    const TABLE = 'status';
 
     /**
      * @var integer
@@ -71,7 +74,7 @@ class Status
     private $entity;
 
     /**
-     * @var Pool
+     * @var PoolInterface
      * @ORM\ManyToOne(targetEntity="Stagem\ZfcPool\Model\PoolInterface", cascade={"persist"})
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="poolId", referencedColumnName="id", nullable=true)

@@ -1,5 +1,5 @@
 <?php
-namespace Popov\ZfcStatus;
+namespace Stagem\ZfcStatus;
 
 return array(
 
@@ -52,7 +52,7 @@ return array(
 			Form\ButtonFieldset::class => Form\ButtonFieldset::class,
 		],
 		//'factories' => [
-		//	'Popov\ZfcStatus\Form\ButtonFieldset' => Form\Factory\ButtonFieldsetFactory::class,
+		//	'Stagem\ZfcStatus\Form\ButtonFieldset' => Form\Factory\ButtonFieldsetFactory::class,
 		//],
         'shared' => [
             Form\ButtonFieldset::class => false
@@ -83,7 +83,7 @@ return array(
             //Service\Progress\StatusContext::class => Service\Progress\Factory\StatusContextFactory::class,
 
 
-            /*'Popov\ZfcStatus\Service\StatusService' => function ($sm) {
+            /*'Stagem\ZfcStatus\Service\StatusService' => function ($sm) {
 				$em = $sm->get('Doctrine\ORM\EntityManager');
 				$service = \Magere\Popov\Service\Factory\Helper::create('status/status', $em);
 				$service->setServiceLocator($sm);

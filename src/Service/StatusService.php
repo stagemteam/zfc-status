@@ -1,13 +1,57 @@
 <?php
-namespace Popov\ZfcStatus\Service;
+namespace Stagem\ZfcStatus\Service;
 
-use Popov\ZfcStatus\Model\Status;
+use Popov\ZfcEntity\Helper\EntityHelper;
+use Popov\ZfcForm\FormElementManager;
+use Stagem\ZfcStatus\Helper\StatusHelper;
+use Stagem\ZfcStatus\Model\Status;
 use Popov\ZfcCore\Service\DomainServiceAbstract;
 use Popov\ZfcEntity\Model\Entity;
 
 class StatusService extends DomainServiceAbstract {
 
 	protected $entity = Status::class;
+
+    /**
+     * @var StatusHelper
+     */
+    protected $statusHelper;
+
+    /**
+     * @var EntityHelper
+     */
+	protected $entityHelper;
+
+    /**
+     * @var StatusChanger
+     */
+    protected $statusChanger;
+
+    /**
+     * @var FormElementManager
+     */
+    protected $elementManager;
+
+    public function __construct(
+        StatusHelper $statusHelper,
+        EntityHelper $entityHelper,
+        StatusChanger $statusChanger,
+        FormElementManager $elementManager
+    )
+    {
+        $this->statusHelper = $statusHelper;
+        $this->entityHelper = $entityHelper;
+        $this->statusChanger = $statusChanger;
+        $this->elementManager = $elementManager;
+    }
+
+    /**
+     * @return StatusChanger
+     */
+    public function getStatusChanger()
+    {
+        return $this->statusChanger;
+    }
 
     /**
      * @param Entity $entity
@@ -26,7 +70,7 @@ class StatusService extends DomainServiceAbstract {
 	 */
 	public function getItemsCollection($entityMnemo = '', $hidden = '')
 	{
-		/** @var \Popov\ZfcStatus\Model\Repository\StatusRepository $repository */
+		/** @var \Stagem\ZfcStatus\Model\Repository\StatusRepository $repository */
 		$repository = $this->getRepository($this->_repositoryName);
 
 		return $repository->findAll($entityMnemo, $hidden);
@@ -39,23 +83,10 @@ class StatusService extends DomainServiceAbstract {
 	 */
 	public function getItems($entityMnemo = '', $mnemo = 'all')
 	{
-		/** @var \Popov\ZfcStatus\Model\Repository\StatusRepository $repository */
+		/** @var \Stagem\ZfcStatus\Model\Repository\StatusRepository $repository */
 		$repository = $this->getRepository($this->_repositoryName);
 
 		return $repository->findItems($entityMnemo, $mnemo);
-	}
-
-	/**
-	 * @param int $id
-	 * @param string $field
-	 * @return mixed
-	 */
-	public function getOneItem($id, $field = 'id')
-	{
-		/** @var \Popov\ZfcStatus\Model\Repository\StatusRepository $repository */
-		$repository = $this->getRepository($this->_repositoryName);
-
-		return $repository->findOneItem($id, $field);
 	}
 
 	/**
@@ -63,9 +94,9 @@ class StatusService extends DomainServiceAbstract {
 	 * @param string $namespace
 	 * @return mixed
 	 */
-	public function getOneItemByName($name, $namespace)
+	public function getItemByName($name, $namespace)
 	{
-		/** @var \Popov\ZfcStatus\Model\Repository\StatusRepository $repository */
+		/** @var \Stagem\ZfcStatus\Model\Repository\StatusRepository $repository */
 		$repository = $this->getRepository($this->_repositoryName);
 
 		return $repository->findOneItemByName($name, $namespace);
@@ -76,13 +107,84 @@ class StatusService extends DomainServiceAbstract {
 	 * @param string $entityMnemo
 	 * @return mixed
 	 */
-	public function getOneItemByMnemo($statusMnemo, $entityMnemo)
+	public function getItemByMnemo($statusMnemo, $entityMnemo)
 	{
-		/** @var \Popov\ZfcStatus\Model\Repository\StatusRepository $repository */
+		/** @var \Stagem\ZfcStatus\Model\Repository\StatusRepository $repository */
 		$repository = $this->getRepository($this->_repositoryName);
 
 		return $repository->findOneItemByMnemo($statusMnemo, $entityMnemo);
 	}
+
+	public function changeStatus($itemMnemo, $itemId, $statusId, array $data = null)
+    {
+        /*$itemMnemo = $post->get('item');
+        $itemId = $post->get('itemId');
+        $statusId = $post->get('status');*/
+
+        //\Zend\Debug\Debug::dump($post); die(__METHOD__);
+
+        #unset($post['buttons']);
+        //unset($post['status']);
+
+        $om = $this->getObjectManager();
+        $item = ($item = $om->find($itemMnemo, $itemId))
+            ? $item
+            : $itemMnemo;
+
+        $entity = $this->entityHelper->setContext($item)->getEntity();
+        $status = $this->getItemByMnemo($statusId, $entity->getMnemo());
+
+        // @todo: Реалізувати Ініціалізатор який буде ін'єктити об'єкт форми у сервіс.
+        //         Тут просто викликати метод $service->getForm()
+        //$formName = str_replace('Model', 'Form', $itemMnemo) . 'Form';
+        /** @var \Zend\Form\Form $form */
+        //$form = $fem->get($formName);
+        /** @var \Popov\Invoice\Form\InvoiceForm $form */
+        ##$form = $this->statusHelper->getChangeForm($itemMnemo);
+
+        //$fem = $this->getFormElementManager();
+        $formName = $this->statusHelper->getFormName($entity);
+        $form = $this->elementManager->get($formName);
+        $form->bind($item);
+
+        if ($postData = $this->statusHelper->getAppropriateEntityData($form->getName(), $data)) {
+            $form->setData($postData);
+        }
+
+        // @todo Enable status validation
+        ##$this->validatable()->apply($form, $status);
+
+        if ($form->isValid()) {
+            /** @var \Stagem\ZfcStatus\Service\StatusChanger $changer */
+            $changer = $this->getStatusChanger();
+            $changer->/*setModule($module)->*/setItem($item);
+
+            if ($changer->canChangeTo($status)) {
+                $oldStatus = $changer->getOldStatus();
+                $params = ['newStatus' => $status, 'oldStatus' => $oldStatus, 'context' => $this];
+
+                $this->getEventManager()->trigger('change', $item, $params);
+                $this->getEventManager()->trigger('change.' . $status->getMnemo(), $item, $params);
+
+                $changer->changeTo($status);
+
+                $this->getEventManager()->trigger('change.post', $item, $params);
+                $this->getEventManager()->trigger('change.' . $status->getMnemo() . '.post', $item, $params);
+
+                // persist only new object (not removed or detached)
+                if ($this->entity()->isNew($item)) {
+                    $om->persist($item);
+                }
+
+                //\Zend\Debug\Debug::dump([$post->get('status'), $item->getStatus()->getMnemo(), $oldStatus->getMnemo()]);
+                //die(__METHOD__);
+
+                $om->flush();
+            } else {
+                $message = 'У вас нет доступа для изменения статуса';
+            }
+        }
+    }
 
 	/**
 	 * @param array $data
@@ -187,33 +289,6 @@ class StatusService extends DomainServiceAbstract {
 		}
 
 		return false;
-	}
-
-
-	//------------------------------------------Events------------------------------------------
-	/**
-	 * Module Users
-	 *
-	 * @param $class
-	 * @param $params
-	 * @return mixed
-	 */
-	public function delete($class, $params)
-	{
-		$event = new LogsEvent();
-		return $event->events($class)->trigger('status.delete', $this, $params);
-	}
-
-	/**
-	 * Module Permission
-	 *
-	 * @param $class
-	 * @param $params
-	 */
-	public function updatePermission($class, $params = [])
-	{
-		$event = new LogsEvent();
-		$event->events($class)->trigger('status.updatePermission', $this, $params);
 	}
 
 }

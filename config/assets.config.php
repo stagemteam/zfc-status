@@ -1,5 +1,5 @@
 <?php
-namespace Popov\ZfcStatus;
+namespace Stagem\ZfcStatus;
 
 return [
     'default' => [

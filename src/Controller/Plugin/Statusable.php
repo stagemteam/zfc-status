@@ -8,9 +8,9 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 26.03.16 19:37
  */
-namespace Popov\ZfcStatus\Controller\Plugin;
+namespace Stagem\ZfcStatus\Controller\Plugin;
 
-use Popov\ZfcStatus\Model\Status;
+use Stagem\ZfcStatus\Model\Status;
 use Zend\Stdlib\Exception;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\Mvc\Controller\Plugin\Url;
@@ -19,8 +19,8 @@ use Zend\Form\Fieldset;
 use Zend\I18n\Translator\TranslatorAwareInterface;
 use Zend\I18n\Translator\TranslatorAwareTrait;
 use Magere\Entity\Controller\Plugin\ModulePlugin as ModulePlugin;
-use Popov\ZfcStatus\Service\StatusChanger;
-use Popov\ZfcStatus\Form\ButtonFieldset;
+use Stagem\ZfcStatus\Service\StatusChanger;
+use Stagem\ZfcStatus\Form\ButtonFieldset;
 
 class Statusable extends AbstractPlugin
 {

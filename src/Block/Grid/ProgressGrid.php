@@ -7,7 +7,7 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 25.12.2015 21:31
  */
-namespace Popov\ZfcStatus\Block\Grid;
+namespace Stagem\ZfcStatus\Block\Grid;
 
 use DoctrineModule\Persistence\ProvidesObjectManager;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;

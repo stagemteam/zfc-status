@@ -7,7 +7,7 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 23.03.2016 15:55
  */
-namespace Popov\ZfcStatus\Service;
+namespace Stagem\ZfcStatus\Service;
 
 use DoctrineModule\Persistence\ProvidesObjectManager;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;

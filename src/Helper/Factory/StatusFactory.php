@@ -8,10 +8,10 @@
  * @datetime: 04.02.15 10:30
  */
 
-namespace Popov\ZfcStatus\View\Helper\Factory;
+namespace Stagem\ZfcStatus\View\Helper\Factory;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Popov\ZfcStatus\View\Helper\StatusHelper as StatusHelper;
+use Stagem\ZfcStatus\View\Helper\StatusHelper as StatusHelper;
 
 class StatusFactory {
 

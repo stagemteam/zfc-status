@@ -5,7 +5,7 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 11.05.16 2:21
  */
-namespace Popov\ZfcStatus\Controller\Plugin;
+namespace Stagem\ZfcStatus\Controller\Plugin;
 
 use Closure;
 use Zend\Stdlib\Exception;
@@ -15,12 +15,12 @@ use Zend\Mvc\Controller\Plugin\Url;
 use Zend\Form\Form;
 use Zend\Form\Fieldset;
 use Magere\Entity\Controller\Plugin\ModulePlugin;
-use Popov\ZfcStatus\Service\StatusService;
-use Popov\ZfcStatus\Service\StatusChanger;
-use Popov\ZfcStatus\Service\Progress\StatusContext;
+use Stagem\ZfcStatus\Service\StatusService;
+use Stagem\ZfcStatus\Service\StatusChanger;
+use Stagem\ZfcStatus\Service\Progress\StatusContext;
 use Popov\Progress\Service\ProgressService;
 
-//use Popov\ZfcStatus\Service\StatusChanger;
+//use Stagem\ZfcStatus\Service\StatusChanger;
 //use Popov\Current\Plugin\Current;
 
 class StatusPlugin extends AbstractPlugin
@@ -104,54 +104,6 @@ class StatusPlugin extends AbstractPlugin
     public function getStatusContext()
     {
         return $this->contextClosure->__invoke();
-    }
-
-    public function getFormName($entity)
-    {
-        //$entityName = is_object($entity) ? get_class($entity) : $entity;
-        $entityName = $this->getModulePlugin()->getEntityPlugin()->getRealDoctrineClass($entity);
-        $formName = str_replace('Model', 'Form', $entityName) . 'Form';
-
-        return $formName;
-    }
-
-    /**
-     * @param object|string $entity
-     * @return Form $form
-     */
-    public function getChangeForm($entity)
-    {
-        $fem = $this->getFormElementManager();
-        $formName = $this->getFormName($entity);
-        $form = $fem->get($formName);
-
-        return $form;
-    }
-
-    /**
-     * Get appropriate entity data
-     *
-     * Some times change action retrieve redundant data.
-     * This method find appropriate data in array by entity mnemo.
-     *
-     * @param $formName
-     * @param array $postData
-     * @return array|bool
-     */
-    public function getAppropriateEntityData($formName, $postData)
-    {
-        //\Zend\Debug\Debug::dump([$formName, $postData]);
-
-        if (isset($postData[$formName])) {
-            return [$formName => $postData[$formName]];
-        } else {
-            foreach ($postData as $name => $value) {
-                if (is_array($value) && ($data = $this->getAppropriateEntityData($formName, $value))) {
-                    return $data;
-                }
-            }
-        }
-        return false;
     }
 
     /**

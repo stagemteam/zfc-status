@@ -6,16 +6,16 @@
  * Time: 20:02
  */
 
-namespace Popov\ZfcStatus\Listener;
+namespace Stagem\ZfcStatus\Listener;
 
 use DateTime;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
-use Popov\ZfcStatus\Controller\StatusController;
+use Stagem\ZfcStatus\Controller\StatusController;
 use Zend\EventManager\Event;
-use Popov\ZfcStatus\Model\StatusedAtAwareInterface;
+use Stagem\ZfcStatus\Model\StatusedAtAwareInterface;
 
 class StatusListener //implements ListenerAggregateInterface
 {

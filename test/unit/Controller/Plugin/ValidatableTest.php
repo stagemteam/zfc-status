@@ -8,10 +8,10 @@
 namespace MagereTest\Cart\Service;
 
 use Popov\Current\Plugin\Current;
-use Popov\ZfcStatus\Controller\Plugin\Statusable;
-use Popov\ZfcStatus\Controller\Plugin\Validatable;
-use Popov\ZfcStatus\Model\Status;
-use Popov\ZfcStatus\Service\StatusChanger;
+use Stagem\ZfcStatus\Controller\Plugin\Statusable;
+use Stagem\ZfcStatus\Controller\Plugin\Validatable;
+use Stagem\ZfcStatus\Model\Status;
+use Stagem\ZfcStatus\Service\StatusChanger;
 use Mockery;
 use Zend\Stdlib\Exception;
 use Zend\Stdlib\ArrayUtils;

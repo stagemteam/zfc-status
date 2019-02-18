@@ -7,10 +7,10 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 11.05.16 2:38
  */
-namespace Popov\ZfcStatus\Controller\Plugin\Factory;
+namespace Stagem\ZfcStatus\Controller\Plugin\Factory;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Popov\ZfcStatus\Controller\Plugin\Validatable;
+use Stagem\ZfcStatus\Controller\Plugin\Validatable;
 use Magere\Permission\Service\PermissionService;
 use Magere\Fields\Service\FieldsService;
 

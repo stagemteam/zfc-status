@@ -1,5 +1,5 @@
 <?php
-namespace Popov\ZfcStatus\Model\Repository;
+namespace Stagem\ZfcStatus\Model\Repository;
 
 use Doctrine\ORM\Query\ResultSetMapping;
 use	Doctrine\ORM\Query\ResultSetMappingBuilder;

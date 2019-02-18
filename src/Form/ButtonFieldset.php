@@ -7,7 +7,7 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 19.03.2016 23:36
  */
-namespace Popov\ZfcStatus\Form;
+namespace Stagem\ZfcStatus\Form;
 
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;

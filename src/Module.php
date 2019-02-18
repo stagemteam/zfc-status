@@ -1,9 +1,9 @@
 <?php
 
-namespace Popov\ZfcStatus;
+namespace Stagem\ZfcStatus;
 
 use Zend\EventManager\EventInterface;
-use Popov\ZfcStatus\Listener;
+use Stagem\ZfcStatus\Listener;
 
 class Module
 {

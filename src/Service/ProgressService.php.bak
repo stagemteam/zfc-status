@@ -1,10 +1,10 @@
 <?php
-namespace Popov\ZfcStatus\Service;
+namespace Stagem\ZfcStatus\Service;
 
 use Popov\Core\Service\DomainServiceAbstract;
 use Magere\Entity\Controller\Plugin\ModulePlugin;
-use Popov\ZfcStatus\Model\Repository\ProgressRepository;
-use Popov\ZfcStatus\Model\Progress;
+use Stagem\ZfcStatus\Model\Repository\ProgressRepository;
+use Stagem\ZfcStatus\Model\Progress;
 
 class ProgressService extends DomainServiceAbstract
 {

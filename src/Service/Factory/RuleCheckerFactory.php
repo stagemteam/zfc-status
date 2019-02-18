@@ -7,18 +7,18 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 23.03.2016 15:38
  */
-namespace Popov\ZfcStatus\Service\Factory;
+namespace Stagem\ZfcStatus\Service\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 
 use Magere\Entity\Service\EntityService as ModuleService;
-use Popov\ZfcStatus\Service\StatusService;
+use Stagem\ZfcStatus\Service\StatusService;
 use Magere\Permission\Service\PermissionService;
 
 use Magere\Entity\Model\Entity as Module;
-use Popov\ZfcStatus\Service\RuleChecker;
+use Stagem\ZfcStatus\Service\RuleChecker;
 use Popov\Current\Plugin\Current;
 
 class RuleCheckerFactory implements FactoryInterface {
@@ -41,7 +41,7 @@ class RuleCheckerFactory implements FactoryInterface {
 		/** @var Module $module */
 		//$module = $moduleService->getOneItem($current('module'), 'namespace');
 		// Nothing change. Current module relative path not allowed
-		//$module = $moduleService->getOneItem('Popov\ZfcStatus', 'namespace');
+		//$module = $moduleService->getOneItem('Stagem\ZfcStatus', 'namespace');
 
 		//\Zend\Debug\Debug::dump($defaultStatus->getId()); die(__METHOD__);
 

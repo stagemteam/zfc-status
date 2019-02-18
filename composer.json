@@ -1,5 +1,5 @@
 {
-  "name": "popov/zfc-status",
+  "name": "stagem/zfc-status",
   "description": "Status Module for ZF3",
   "type": "library",
   "license": "MIT",
@@ -19,20 +19,26 @@
       "email": "vlad.gem.typ@gmail.com",
       "homepage": "http://stagem.com.ua/",
       "role": "Developer"
+    },
+    {
+      "name": "Andrey Andreev",
+      "email": "andrey.anrdeev1995@gmail.com",
+      "homepage": "http://stagem.com.ua/",
+      "role": "Developer"
     }
   ],
   "require": {
-    "php": ">=5.5"
+    "php": ">7.0"
   },
   "autoload": {
     "psr-4": {
-      "Popov\\ZfcStatus\\": "src/"
+      "Stagem\\ZfcStatus\\": "src/"
     }
   },
   "extra": {
     "zf": {
-      "component": "Popov\\ZfcStatus",
-      "config-provider": "Popov\\ZfcStatus\\ConfigProvider"
+      "component": "Stagem\\ZfcStatus",
+      "config-provider": "Stagem\\ZfcStatus\\ConfigProvider"
     }
   }
 }

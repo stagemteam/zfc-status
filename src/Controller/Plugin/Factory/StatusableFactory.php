@@ -7,12 +7,12 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 04.02.15 10:30
  */
-namespace Popov\ZfcStatus\Controller\Plugin\Factory;
+namespace Stagem\ZfcStatus\Controller\Plugin\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 //use Zend\View\HelperPluginManager;
-use Popov\ZfcStatus\Controller\Plugin\Statusable;
+use Stagem\ZfcStatus\Controller\Plugin\Statusable;
 
 class StatusableFactory
 {

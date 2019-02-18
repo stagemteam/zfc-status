@@ -1,5 +1,5 @@
 <?php
-namespace Popov\ZfcStatus\Controller;
+namespace Stagem\ZfcStatus\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use    Zend\View\Model\ViewModel;
@@ -9,15 +9,15 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Sql;
 
-use Popov\ZfcStatus\Form\Status as StatusForm;
+use Stagem\ZfcStatus\Form\Status as StatusForm;
 
 /**
  * Class StatusController
  *
- * @package Popov\ZfcStatus
- * @method \Popov\ZfcStatus\Controller\Plugin\Statusable statusable()
- * @method \Popov\ZfcStatus\Controller\Plugin\Validatable validatable()
- * @method \Popov\ZfcStatus\Controller\Plugin\StatusPlugin status()
+ * @package Stagem\ZfcStatus
+ * @method \Stagem\ZfcStatus\Controller\Plugin\Statusable statusable()
+ * @method \Stagem\ZfcStatus\Controller\Plugin\Validatable validatable()
+ * @method \Stagem\ZfcStatus\Controller\Plugin\StatusPlugin status()
  * @method \Magere\Entity\Controller\Plugin\ModulePlugin module()
  * @method \Magere\Entity\Controller\Plugin\EntityPlugin entity()
  */
@@ -29,7 +29,7 @@ class StatusController extends AbstractActionController {
 
     public function indexAction() {
         $locator = $this->getServiceLocator();
-        /** @var \Popov\ZfcStatus\Service\StatusService $service */
+        /** @var \Stagem\ZfcStatus\Service\StatusService $service */
         $service = $locator->get($this->serviceName);
         $this->layout('layout/home');
 
@@ -51,7 +51,7 @@ class StatusController extends AbstractActionController {
         $request = $this->getRequest();
         $route = $this->getEvent()->getRouteMatch();
         $sm = $this->getServiceLocator();
-        /** @var \Popov\ZfcStatus\Service\StatusService $service */
+        /** @var \Stagem\ZfcStatus\Service\StatusService $service */
         $service = $sm->get($this->serviceName);
         $id = (int) $route->getParam('id');
         $item = $service->getOneItem($id);
@@ -293,7 +293,7 @@ class StatusController extends AbstractActionController {
     public function changeAction() {
         $request = $this->getRequest();
         if ($request->isPost() && $request->isXmlHttpRequest()) {
-            /** @var \Popov\ZfcStatus\Service\StatusService $statusService */
+            /** @var \Stagem\ZfcStatus\Service\StatusService $statusService */
             /** @var \Magere\Permission\Service\PermissionService $permissionService */
             /** @var \Magere\Entity\Service\EntityService $moduleService */
             /** @var \Zend\Stdlib\Parameters $post */
@@ -329,7 +329,7 @@ class StatusController extends AbstractActionController {
             //$module = $this->module()->setRealContext($item)->getRealModule();
             //$status = $statusService->getOneItemByMnemo($statusPost, $module->getMnemo());
             $entity = $this->entity()->setContext($item)->getEntity();
-            $status = $statusService->getOneItemByMnemo($statusPost, $entity->getMnemo());
+            $status = $statusService->getItemByMnemo($statusPost, $entity->getMnemo());
 
             // @todo: Реалізувати Ініціалізатор який буде ін'єктити об'єкт форми у сервіс.
             //         Тут просто викликати метод $service->getForm()
@@ -348,7 +348,7 @@ class StatusController extends AbstractActionController {
 			//\Zend\Debug\Debug::dump(get_class($form)); die(__METHOD__ . __LINE__);
             $message = '';
             if ($form->isValid()) {
-                /** @var \Popov\ZfcStatus\Service\StatusChanger $changer */
+                /** @var \Stagem\ZfcStatus\Service\StatusChanger $changer */
                 $changer = $sm->get('StatusChanger');
                 $changer->/*setModule($module)->*/setItem($item);
 
@@ -422,7 +422,7 @@ class StatusController extends AbstractActionController {
         $request = $this->getRequest();
         if ($request->isPost() && $request->isXmlHttpRequest()) {
             $locator = $this->getServiceLocator();
-            /** @var \Popov\ZfcStatus\Service\StatusService $service */
+            /** @var \Stagem\ZfcStatus\Service\StatusService $service */
             $service = $locator->get($this->serviceName);
 
             // Access to page for current user

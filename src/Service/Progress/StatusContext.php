@@ -7,12 +7,12 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 06.11.2016 21:56
  */
-namespace Popov\ZfcStatus\Service\Progress;
+namespace Stagem\ZfcStatus\Service\Progress;
 
 use Zend\Mvc\I18n\Translator;
 use Zend\I18n\Translator\TranslatorAwareTrait;
 use Popov\Progress\Service\ContextInterface;
-use Popov\ZfcStatus\Model\Status;
+use Stagem\ZfcStatus\Model\Status;
 
 /**
  * @method Translator getTranslator()

@@ -7,15 +7,15 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 19.03.2016 23:43
  */
-namespace Popov\ZfcStatus\Form\Factory;
+namespace Stagem\ZfcStatus\Form\Factory;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 use Zend\Mvc\Controller\Plugin\Params;
 
 
-use Popov\ZfcStatus\Service\StatusChanger;
-use Popov\ZfcStatus\Form\ButtonFieldset;
+use Stagem\ZfcStatus\Service\StatusChanger;
+use Stagem\ZfcStatus\Form\ButtonFieldset;
 
 class ButtonFieldsetFactory {
 

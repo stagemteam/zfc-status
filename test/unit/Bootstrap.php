@@ -32,7 +32,7 @@ class Bootstrap
             'modules' => [
                 //'Magere\Popov',
                 'Popov\Simpler',
-                'Popov\ZfcStatus',
+                'Stagem\ZfcStatus',
                 'Magere\Users',
             ],
         ];

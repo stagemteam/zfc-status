@@ -8,13 +8,13 @@
  * @datetime: 17.03.2016 19:31
  */
 
-namespace Popov\ZfcStatus\Model;
+namespace Stagem\ZfcStatus\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Popov\ZfcCore\Model\DomainAwareTrait;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Stagem\ZfcStatus\Model\Repository\StatusRepository")
  * @ORM\Table(name="status_rule")
  */
 class Rule

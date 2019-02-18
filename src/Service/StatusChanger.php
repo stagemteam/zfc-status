@@ -7,7 +7,7 @@
  * @author Popov Sergiy <popow.serhii@gmail.com>
  * @datetime: 25.02.2016 23:31
  */
-namespace Popov\ZfcStatus\Service;
+namespace Stagem\ZfcStatus\Service;
 
 use Zend\Stdlib\Exception;
 
@@ -16,10 +16,10 @@ use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
 use Magere\Permission\Model\PermissionAccess;
-//use Popov\ZfcStatus\Service\StatusService;
-use Popov\ZfcStatus\Service\RuleChecker;
+//use Stagem\ZfcStatus\Service\StatusService;
+use Stagem\ZfcStatus\Service\RuleChecker;
 use Magere\Entity\Controller\Plugin\ModulePlugin;
-use Popov\ZfcStatus\Model\Status;
+use Stagem\ZfcStatus\Model\Status;
 use Magere\Entity\Model\Entity as Module;
 
 class StatusChanger implements ObjectManagerAwareInterface {
@@ -346,7 +346,7 @@ class StatusChanger implements ObjectManagerAwareInterface {
         if ($this->isAdmin()) {
             return true;
         }
-        /** @var \Popov\ZfcStatus\Model\Status $status */
+        /** @var \Stagem\ZfcStatus\Model\Status $status */
         $settings = $this->tree['settings'];
 
         if (isset($settings['change'][$status->getId()])

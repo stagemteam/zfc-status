@@ -8,11 +8,11 @@
  * @datetime: 04.02.15 10:30
  */
 
-namespace Popov\ZfcStatus\Service\Factory;
+namespace Stagem\ZfcStatus\Service\Factory;
 
 use Interop\Container\ContainerInterface;
 use Zend\Mvc\Controller\PluginManager;
-use Popov\ZfcStatus\Service\ProgressService;
+use Stagem\ZfcStatus\Service\ProgressService;
 use Magere\Entity\Controller\Plugin\ModulePlugin;
 
 class ProgressServiceFactory {

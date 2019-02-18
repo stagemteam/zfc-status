@@ -1,6 +1,6 @@
 <?php
 
-namespace Popov\ZfcStatus\Model;
+namespace Stagem\ZfcStatus\Model;
 
 use DateTime;
 
