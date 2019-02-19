@@ -11,10 +11,8 @@ namespace Stagem\ZfcStatus\Service;
 
 use DoctrineModule\Persistence\ProvidesObjectManager;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
-
 use Zend\Stdlib\Exception;
-
-use Magere\Users\Model\Users as User;
+use Popov\ZfcUser\Model\User;
 
 class RuleChecker implements ObjectManagerAwareInterface {
 

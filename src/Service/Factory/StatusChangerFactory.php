@@ -9,54 +9,64 @@
  */
 namespace Stagem\ZfcStatus\Service\Factory;
 
+use Popov\ZfcEntity\Helper\ModuleHelper;
+use Popov\ZfcEntity\Model\Entity;
+use Popov\ZfcForm\FormElementManager;
+use Popov\ZfcUser\Helper\UserHelper;
+use Psr\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 
-use Magere\Entity\Service\EntityService as ModuleService;
+use Popov\ZfcEntity\Service\ModuleService;
 use Stagem\ZfcStatus\Service\StatusService;
-use Magere\Permission\Service\PermissionService;
+use Popov\ZfcPermission\Service\PermissionService;
 
-use Magere\Entity\Model\Entity as Module;
+use Popov\ZfcEntity\Model\Module;
 use Stagem\ZfcStatus\Service\StatusChanger;
 use Stagem\ZfcStatus\Service\RuleChecker;
-use Popov\Current\Plugin\Current;
+use Popov\ZfcCurrent\CurrentHelper;
 
-class StatusChangerFactory implements FactoryInterface {
+class StatusChangerFactory {
 
-	public function createService(ServiceLocatorInterface $sm) {
-		$cpm = $sm->get('ControllerPluginManager');
-		$om = $sm->get('Doctrine\ORM\EntityManager');
+	public function __invoke(ContainerInterface $container) {
+		$om = $container->get('Doctrine\ORM\EntityManager');
+
+		$elementManager = $container->get(FormElementManager::class);
+
 		/** @var StatusService $statusService */
-		$statusService = $sm->get('StatusService');
-		/** @var ModuleService $moduleService */
-		$moduleService = $sm->get('EntityService');
-		$modulePlugin = $cpm->get('module');
-		/** @var PermissionService $permissionService */
-		$permissionService = $sm->get('PermissionService');
-		$ruleChecker = $sm->get('RuleChecker');
+		$statusService = $container->get('StatusService');
 
-		/** @var Current $current */
-		$current = $cpm->get('current');
-		$user = $cpm->get('user')->current();
-		/** @var Module $module */
+
+		/** @var ModuleHelper $moduleHelper */
+		$moduleHelper = $container->get(ModuleHelper::class);
+
+		/** @var PermissionService $permissionService */
+		$permissionService = $container->get('PermissionService');
+		$ruleChecker = $container->get('RuleChecker');
+
+		/** @var CurrentHelper $current */
+		//$current = $container->get(CurrentHelper::class);
+        $userHelper = $container->get(UserHelper::class);
+        $user = $userHelper->current();
+		/** @var Module $entity */
 		//$module = $moduleService->getOneItem($current('module'), 'namespace');
 		// Nothing change. Current module relative path not allowed
-		$module = $moduleService->getOneItem('Stagem\ZfcStatus', 'namespace');
+		$entity = $om->getRepository(Entity::class)->findOneBy(['namespace' => Entity::class]);
 
 		//\Zend\Debug\Debug::dump($defaultStatus->getId()); die(__METHOD__);
 
-		$changer = new StatusChanger($statusService, $modulePlugin);
+		$changer = new StatusChanger($statusService, $moduleHelper, $elementManager);
+
 		//$changer->setModule($module);
 		$changer->setRuleChecker($ruleChecker);
 
-		//\Zend\Debug\Debug::dump($pm->get('user')->isAdmin()); die(__METHOD__);
 
-		if (!$cpm->get('user')->isAdmin()) {
-			$tree = $permissionService->getHumanReadablePermissionTree($module, $user);
+		if (!$userHelper->isAdmin()) {
+			$tree = $permissionService->getHumanReadablePermissionTree($entity, $user);
             // has status settings save in database
-            if (isset($tree[$module->getId()])) {
-                $changer->setPermissionTree($tree[$module->getId()]);
+            if (isset($tree[$entity->getId()])) {
+                $changer->setPermissionTree($tree[$entity->getId()]);
             }
 		}
 

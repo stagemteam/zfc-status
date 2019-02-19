@@ -9,50 +9,18 @@
  */
 namespace Stagem\ZfcStatus\Service\Factory;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Psr\Container\ContainerInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
-
-use Magere\Entity\Service\EntityService as ModuleService;
-use Stagem\ZfcStatus\Service\StatusService;
-use Magere\Permission\Service\PermissionService;
-
-use Magere\Entity\Model\Entity as Module;
+use Popov\ZfcUser\Helper\UserHelper;
 use Stagem\ZfcStatus\Service\RuleChecker;
-use Popov\Current\Plugin\Current;
 
-class RuleCheckerFactory implements FactoryInterface {
+class RuleCheckerFactory {
 
-	public function createService(ServiceLocatorInterface $sm) {
-		$pm = $sm->get('ControllerPluginManager');
-		$om = $sm->get('Doctrine\ORM\EntityManager');
-		/** @var StatusService $statusService */
-		//$statusService = $sm->get('StatusService');
-		/** @var RuleHandler $ruleHandler */
-		//$ruleHandler = $sm->get('RuleHandler');
-		/** @var ModuleService $moduleService */
-		//$moduleService = $sm->get('EntityService');
-		/** @var PermissionService $permissionService */
-		//$permissionService = $sm->get('PermissionService');
-
-		/** @var Current $current */
-		//$current = $pm->get('current');
-		$user = $pm->get('user')->current();
-		/** @var Module $module */
-		//$module = $moduleService->getOneItem($current('module'), 'namespace');
-		// Nothing change. Current module relative path not allowed
-		//$module = $moduleService->getOneItem('Stagem\ZfcStatus', 'namespace');
-
-		//\Zend\Debug\Debug::dump($defaultStatus->getId()); die(__METHOD__);
+	public function __invoke(ContainerInterface $container) {
+		$om = $container->get('Doctrine\ORM\EntityManager');
+		$user = $container->get(UserHelper::class)->current();
 
 		$ruler = new RuleChecker($user);
-
-		//\Zend\Debug\Debug::dump($route->getParam('__NAMESPACE__')); die(__METHOD__);
-
-		//if (!$pm->get('user')->isAdmin()) {
-		//	$tree = $permissionService->getHumanReadablePermissionsTree($module, $user);
-		//	$changer->setPermissionTree($tree[$module->getId()]);
-		//}
 
 		if ($ruler instanceof ObjectManagerAwareInterface) {
 			$ruler->setObjectManager($om);

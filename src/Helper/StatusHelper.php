@@ -1,8 +1,9 @@
 <?php
 namespace Stagem\ZfcStatus\Helper;
 
-use Popov\ZfcEntity\Helper\EntityHelper;
 use Zend\View\Helper\AbstractHelper;
+use Zend\I18n\Translator\TranslatorInterface;
+use Popov\ZfcEntity\Helper\EntityHelper;
 use Popov\ZfcEntity\Helper\ModuleHelper;
 use Stagem\ZfcStatus\Service\StatusService;
 use Stagem\ZfcStatus\Service\StatusChanger;
@@ -30,7 +31,6 @@ class StatusHelper extends AbstractHelper
      * @param StatusService $statusService
      * @param ProgressService $progressService
      * @param StatusChanger $statusChanger
-     * @param EntityHelper $entityHelper
      * @param ModuleHelper $moduleHelper
      * @param $translator
      */
@@ -38,15 +38,13 @@ class StatusHelper extends AbstractHelper
         StatusService $statusService,
         ProgressService $progressService,
         StatusChanger $statusChanger,
-        EntityHelper $entityHelper,
         ModuleHelper $moduleHelper,
-        $translator
+        TranslatorInterface $translator = null
     )
     {
         $this->statusService = $statusService;
         $this->progressService = $progressService;
         $this->statusChanger = $statusChanger;
-        $this->entityHelper = $entityHelper;
         $this->moduleHelper = $moduleHelper;
         //$this->_translator = $translator;
         //$this->_translator->setTranslatorTextDomain('Magere\Permission');
@@ -91,41 +89,6 @@ class StatusHelper extends AbstractHelper
         $status = $repository->findOneBy([$field => $value]);
 
         return $status;
-    }
-
-    public function getFormName($entity)
-    {
-        //$entityName = is_object($entity) ? get_class($entity) : $entity;
-        $entityName = $this->entityHelper->getDoctrineClass($entity);
-        $formName = str_replace('Model', 'Form', $entityName) . 'Form';
-
-        return $formName;
-    }
-
-    /**
-     * Get appropriate entity data
-     *
-     * Some times change action retrieve redundant data.
-     * This method find appropriate data in array by entity mnemo.
-     *
-     * @param $formName
-     * @param array $postData
-     * @return array|bool
-     */
-    public function getAppropriateEntityData($formName, $postData)
-    {
-        //\Zend\Debug\Debug::dump([$formName, $postData]);
-
-        if (isset($postData[$formName])) {
-            return [$formName => $postData[$formName]];
-        } else {
-            foreach ($postData as $name => $value) {
-                if (is_array($value) && ($data = $this->getAppropriateEntityData($formName, $value))) {
-                    return $data;
-                }
-            }
-        }
-        return false;
     }
 
 

@@ -65,6 +65,12 @@ class Status
     private $color;
 
     /**
+     * @var integer
+     * @ORM\Column(name="isDefault", type="smallint", length=1, nullable=true)
+     */
+    private $isDefault = 0;
+
+    /**
      * @var Entity
      * @ORM\ManyToOne(targetEntity="Popov\ZfcEntity\Model\Entity", cascade={"persist", "remove"})
      * @ORM\JoinColumns({
@@ -80,7 +86,7 @@ class Status
      *   @ORM\JoinColumn(name="poolId", referencedColumnName="id", nullable=true)
      * })
      */
-    private $pool;
+    #private $pool;
 
     /**
      * @var \Doctrine\Common\Collections\Collection|Status[]
@@ -233,6 +239,25 @@ class Status
     }
 
     /**
+     * @return int
+     */
+    public function isDefault(): int
+    {
+        return $this->isDefault;
+    }
+
+    /**
+     * @param int $isDefault
+     * @return Status
+     */
+    public function setIsDefault(int $isDefault): Status
+    {
+        $this->isDefault = $isDefault;
+
+        return $this;
+    }
+
+    /**
      * Set entity
      *
      * @param Entity $entity
@@ -259,21 +284,21 @@ class Status
     /**
      * @return Pool
      */
-    public function getPool(): Pool
+    /*public function getPool(): Pool
     {
         return $this->pool;
-    }
+    }*/
 
     /**
      * @param Pool $pool
      * @return Status
      */
-    public function setPool(Pool $pool): Status
+    /*public function setPool(Pool $pool): Status
     {
         $this->pool = $pool;
 
         return $this;
-    }
+    }*/
 
     /**
      * @return Status[]

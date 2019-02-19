@@ -56,7 +56,7 @@ class Rule
     protected $status;
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -64,7 +64,7 @@ class Rule
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return Rule
      */
     public function setId($id)
@@ -75,7 +75,7 @@ class Rule
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getName()
     {
@@ -83,7 +83,7 @@ class Rule
     }
 
     /**
-     * @param mixed $name
+     * @param string $name
      * @return Rule
      */
     public function setName($name)
@@ -94,7 +94,7 @@ class Rule
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getConditions()
     {
@@ -102,7 +102,7 @@ class Rule
     }
 
     /**
-     * @param mixed $conditions
+     * @param string $conditions
      * @return Rule
      */
     public function setConditions($conditions)
@@ -113,7 +113,7 @@ class Rule
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getPriority()
     {
@@ -121,7 +121,7 @@ class Rule
     }
 
     /**
-     * @param mixed $priority
+     * @param int $priority
      * @return Rule
      */
     public function setPriority($priority)
@@ -132,7 +132,7 @@ class Rule
     }
 
     /**
-     * @return mixed
+     * @return Status
      */
     public function getStatus()
     {
@@ -140,7 +140,7 @@ class Rule
     }
 
     /**
-     * @param mixed $status
+     * @param Status $status
      * @return Rule
      */
     public function setStatus($status)

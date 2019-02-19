@@ -9,16 +9,19 @@
  */
 namespace Stagem\ZfcStatus\Service\Progress;
 
-use Zend\Mvc\I18n\Translator;
+use Popov\ZfcUser\Service\UserAwareTrait;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\I18n\Translator\TranslatorAwareTrait;
-use Popov\Progress\Service\ContextInterface;
+use Stagem\ZfcProgress\Service\ContextInterface;
 use Stagem\ZfcStatus\Model\Status;
 
 /**
- * @method Translator getTranslator()
+ * @method TranslatorInterface getTranslator()
  */
 class StatusContext implements ContextInterface
 {
+    use UserAwareTrait;
+
     use TranslatorAwareTrait;
 
     protected $event;
@@ -67,5 +70,10 @@ class StatusContext implements ContextInterface
         );
 
         return sprintf($template, $prefix, $oldStatus->getName(), $newStatus->getName());
+    }
+
+    public function getDescription()
+    {
+        return '';
     }
 }

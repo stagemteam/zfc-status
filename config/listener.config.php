@@ -13,17 +13,19 @@
  * @license https://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
-use Stagem\ZfcStatus\Controller\StatusController;
+//use Stagem\ZfcStatus\Controller\StatusController;
 use Stagem\ZfcStatus\Listener\StatusListener;
+use Stagem\ZfcStatus\Service\StatusChanger;
 
 return [
     'definitions' => [
-        [
+        // it disabled such as we set statusedAt in ProgressServiceListener
+        /*[
             'listener' => StatusListener::class,
             'method' => 'postChange',
             'event' => 'change.post',
-            'identifier' => StatusController::class,
+            'identifier' => StatusChanger::class,
             'priority' => 110,
-        ],
+        ],*/
     ],
 ];

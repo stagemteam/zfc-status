@@ -9,22 +9,28 @@
  */
 namespace Stagem\ZfcStatus\Service;
 
+use Popov\ZfcEntity\Helper\ModuleHelper;
+use Popov\ZfcForm\FormElementManager;
 use Zend\Stdlib\Exception;
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerAwareTrait;
 
+use DateTime;
 use DoctrineModule\Persistence\ProvidesObjectManager;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
-use Magere\Permission\Model\PermissionAccess;
-//use Stagem\ZfcStatus\Service\StatusService;
-use Stagem\ZfcStatus\Service\RuleChecker;
-use Magere\Entity\Controller\Plugin\ModulePlugin;
-use Stagem\ZfcStatus\Model\Status;
-use Magere\Entity\Model\Entity as Module;
 
-class StatusChanger implements ObjectManagerAwareInterface {
+use Popov\ZfcPermission\Model\PermissionAccess;
+use Stagem\ZfcStatus\Service\RuleChecker;
+use Stagem\ZfcStatus\Model\Status;
+use Popov\ZfcEntity\Model\Entity as Module;
+
+class StatusChanger implements ObjectManagerAwareInterface, EventManagerAwareInterface {
 
     use ProvidesObjectManager;
+
+    use EventManagerAwareTrait;
 
     const DEFAULT_STATUS_MNEMO = 'draft';
 
@@ -34,11 +40,17 @@ class StatusChanger implements ObjectManagerAwareInterface {
     /** @var RuleChecker */
     protected $ruleHandler;
 
-    /** @var ModulePlugin */
-    protected $modulePlugin;
+    /** @var ModuleHelper */
+    protected $moduleHelper;
 
     /** @var array */
     protected $tree;
+
+    /**
+     * @var FormElementManager
+     */
+    protected $elementManager;
+
 
     protected $defaultStatus;
 
@@ -65,28 +77,26 @@ class StatusChanger implements ObjectManagerAwareInterface {
 
     static protected $instance;
 
-    public function __construct(StatusService $statusService, ModulePlugin $modulePlugin) {
+    public function __construct(
+        StatusService $statusService,
+        ModuleHelper $moduleHelper,
+        FormElementManager $elementManager
+    ) {
         $this->statusService = $statusService;
-        $this->modulePlugin = $modulePlugin;
-
-        //self::$instance = $this;
+        $this->moduleHelper = $moduleHelper;
+        $this->elementManager = $elementManager;
     }
-
-
-    /*static public function getInstance() {
-        return self::$instance;
-    }*/
 
     public function getStatusService() {
         return $this->statusService;
     }
 
-    public function getModulePlugin() {
-        return $this->modulePlugin;
+    public function getModuleHelper() {
+        return $this->moduleHelper;
     }
 
-    public function getEntityPlugin() {
-        return $this->getModulePlugin()->getEntityPlugin();
+    public function getEntityHelper() {
+        return $this->getModuleHelper()->getEntityHelper();
     }
 
     public function setRuleChecker(RuleChecker $ruleHandler) {
@@ -143,7 +153,7 @@ class StatusChanger implements ObjectManagerAwareInterface {
 
     public function getEntity() {
         $item = $this->getItem();
-        $entity = $this->getEntityPlugin()->setContext($item)->getEntity();
+        $entity = $this->getEntityHelper()->setContext($item)->getEntity();
 
         return $entity;
     }
@@ -302,6 +312,119 @@ class StatusChanger implements ObjectManagerAwareInterface {
 
         return false;
     }
+
+    public function change($itemMnemo, $itemId, $statusId, array $data = null)
+    {
+        /*$itemMnemo = $post->get('item');
+        $itemId = $post->get('itemId');
+        $statusId = $post->get('status');*/
+
+        //\Zend\Debug\Debug::dump($post); die(__METHOD__);
+
+        #unset($post['buttons']);
+        //unset($post['status']);
+
+        $om = $this->getObjectManager();
+
+        $entityHelper = $this->getEntityHelper();
+        $entity = $entityHelper->getBy($itemMnemo, 'mnemo');
+
+        $item = ($item = $om->find($entity->getNamespace(), $itemId))
+            ? $item
+            : $itemMnemo;
+
+        //$entityHelper = $this->getEntityHelper();
+        //$entity = $entityHelper->setContext($item)->getEntity();
+        //$status = $this->statusService->getItemByMnemo($statusId, $entity->getMnemo());
+        $status = $this->statusService->find($statusId);
+
+        // @todo: Реалізувати Ініціалізатор який буде ін'єктити об'єкт форми у сервіс.
+        //         Тут просто викликати метод $service->getForm()
+        //$formName = str_replace('Model', 'Form', $itemMnemo) . 'Form';
+        /** @var \Zend\Form\Form $form */
+        //$form = $fem->get($formName);
+        /** @var \Popov\Invoice\Form\InvoiceForm $form */
+        ##$form = $this->statusHelper->getChangeForm($itemMnemo);
+
+        ##$formName = $this->getFormName($entity);
+        ##$form = $this->elementManager->get($formName);
+        ##$form->bind($item);
+
+        ##if ($postData = $this->getAppropriateEntityData($form->getName(), $data)) {
+        ##    $form->setData($postData);
+        ##}
+
+        // @todo Enable status validation
+        ##$this->validatable()->apply($form, $status);
+
+        ##if ($form->isValid()) {
+            /** @var \Stagem\ZfcStatus\Service\StatusChanger $this */
+            //$changer = $this->getStatusChanger();
+            $this->/*setModule($module)->*/setItem($item);
+
+            if ($this->canChangeTo($status)) {
+                $oldStatus = $this->getOldStatus();
+                $params = ['newStatus' => $status, 'oldStatus' => $oldStatus, 'context' => $this];
+
+                $this->getEventManager()->trigger('change', $item, $params);
+                $this->getEventManager()->trigger('change.' . $status->getMnemo(), $item, $params);
+
+                $this->changeTo($status);
+
+                $this->getEventManager()->trigger('change.post', $item, $params);
+                $this->getEventManager()->trigger('change.' . $status->getMnemo() . '.post', $item, $params);
+
+                // persist only new object (not removed or detached)
+                if ($this->getEntityHelper()->isNew($item)) {
+                    $om->persist($item);
+                }
+
+                //\Zend\Debug\Debug::dump([$post->get('status'), $item->getStatus()->getMnemo(), $oldStatus->getMnemo()]);
+                //die(__METHOD__);
+
+                $om->flush();
+            ##} else {
+                // @todo throw Exception
+            ##    $message = 'У вас нет доступа для изменения статуса';
+            ##}
+        }
+    }
+
+    public function getFormName($entity)
+    {
+        //$entityName = is_object($entity) ? get_class($entity) : $entity;
+        $entityName = $this->getEntityHelper()->getDoctrineClass($entity);
+        $formName = str_replace('Model', 'Form', $entityName) . 'Form';
+
+        return $formName;
+    }
+
+    /**
+     * Get appropriate entity data
+     *
+     * Some times change action retrieve redundant data.
+     * This method find appropriate data in array by entity mnemo.
+     *
+     * @param $formName
+     * @param array $postData
+     * @return array|bool
+     */
+    public function getAppropriateEntityData($formName, $postData)
+    {
+        //\Zend\Debug\Debug::dump([$formName, $postData]);
+
+        if (isset($postData[$formName])) {
+            return [$formName => $postData[$formName]];
+        } else {
+            foreach ($postData as $name => $value) {
+                if (is_array($value) && ($data = $this->getAppropriateEntityData($formName, $value))) {
+                    return $data;
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * If $tree is null that mean current user is admin

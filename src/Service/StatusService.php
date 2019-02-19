@@ -13,11 +13,6 @@ class StatusService extends DomainServiceAbstract {
 	protected $entity = Status::class;
 
     /**
-     * @var StatusHelper
-     */
-    protected $statusHelper;
-
-    /**
      * @var EntityHelper
      */
 	protected $entityHelper;
@@ -33,25 +28,23 @@ class StatusService extends DomainServiceAbstract {
     protected $elementManager;
 
     public function __construct(
-        StatusHelper $statusHelper,
-        EntityHelper $entityHelper,
-        StatusChanger $statusChanger,
-        FormElementManager $elementManager
+        EntityHelper $entityHelper
+        //,StatusChanger $statusChanger
+        //,FormElementManager $elementManager
     )
     {
-        $this->statusHelper = $statusHelper;
         $this->entityHelper = $entityHelper;
-        $this->statusChanger = $statusChanger;
-        $this->elementManager = $elementManager;
+        //$this->statusChanger = $statusChanger;
+        //$this->elementManager = $elementManager;
     }
 
     /**
      * @return StatusChanger
      */
-    public function getStatusChanger()
+    /*public function getStatusChanger()
     {
         return $this->statusChanger;
-    }
+    }*/
 
     /**
      * @param Entity $entity
@@ -114,77 +107,6 @@ class StatusService extends DomainServiceAbstract {
 
 		return $repository->findOneItemByMnemo($statusMnemo, $entityMnemo);
 	}
-
-	public function changeStatus($itemMnemo, $itemId, $statusId, array $data = null)
-    {
-        /*$itemMnemo = $post->get('item');
-        $itemId = $post->get('itemId');
-        $statusId = $post->get('status');*/
-
-        //\Zend\Debug\Debug::dump($post); die(__METHOD__);
-
-        #unset($post['buttons']);
-        //unset($post['status']);
-
-        $om = $this->getObjectManager();
-        $item = ($item = $om->find($itemMnemo, $itemId))
-            ? $item
-            : $itemMnemo;
-
-        $entity = $this->entityHelper->setContext($item)->getEntity();
-        $status = $this->getItemByMnemo($statusId, $entity->getMnemo());
-
-        // @todo: Реалізувати Ініціалізатор який буде ін'єктити об'єкт форми у сервіс.
-        //         Тут просто викликати метод $service->getForm()
-        //$formName = str_replace('Model', 'Form', $itemMnemo) . 'Form';
-        /** @var \Zend\Form\Form $form */
-        //$form = $fem->get($formName);
-        /** @var \Popov\Invoice\Form\InvoiceForm $form */
-        ##$form = $this->statusHelper->getChangeForm($itemMnemo);
-
-        //$fem = $this->getFormElementManager();
-        $formName = $this->statusHelper->getFormName($entity);
-        $form = $this->elementManager->get($formName);
-        $form->bind($item);
-
-        if ($postData = $this->statusHelper->getAppropriateEntityData($form->getName(), $data)) {
-            $form->setData($postData);
-        }
-
-        // @todo Enable status validation
-        ##$this->validatable()->apply($form, $status);
-
-        if ($form->isValid()) {
-            /** @var \Stagem\ZfcStatus\Service\StatusChanger $changer */
-            $changer = $this->getStatusChanger();
-            $changer->/*setModule($module)->*/setItem($item);
-
-            if ($changer->canChangeTo($status)) {
-                $oldStatus = $changer->getOldStatus();
-                $params = ['newStatus' => $status, 'oldStatus' => $oldStatus, 'context' => $this];
-
-                $this->getEventManager()->trigger('change', $item, $params);
-                $this->getEventManager()->trigger('change.' . $status->getMnemo(), $item, $params);
-
-                $changer->changeTo($status);
-
-                $this->getEventManager()->trigger('change.post', $item, $params);
-                $this->getEventManager()->trigger('change.' . $status->getMnemo() . '.post', $item, $params);
-
-                // persist only new object (not removed or detached)
-                if ($this->entity()->isNew($item)) {
-                    $om->persist($item);
-                }
-
-                //\Zend\Debug\Debug::dump([$post->get('status'), $item->getStatus()->getMnemo(), $oldStatus->getMnemo()]);
-                //die(__METHOD__);
-
-                $om->flush();
-            } else {
-                $message = 'У вас нет доступа для изменения статуса';
-            }
-        }
-    }
 
 	/**
 	 * @param array $data

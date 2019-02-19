@@ -10,21 +10,21 @@
 
 namespace Stagem\ZfcStatus\View\Helper\Factory;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Stagem\ZfcStatus\View\Helper\StatusHelper as StatusHelper;
+use Popov\ZfcEntity\Helper\ModuleHelper;
+use Psr\Container\ContainerInterface;
+use Zend\I18n\Translator\TranslatorInterface;
+use Stagem\ZfcStatus\Helper\StatusHelper;
 
-class StatusFactory {
+class StatusFactory
+{
+    public function __invoke(ContainerInterface $container)
+    {
+        $statusService = $container->get('StatusService');
+        $progressService = $container->get('ProgressService');
+        $statusChanger = $container->get('StatusChanger');
+        $moduleHelper = $container->get(ModuleHelper::class);
+        $translator = $container->get(TranslatorInterface::class);
 
-	public function __invoke(ServiceLocatorInterface $vhm) {
-		$sm = $vhm->getServiceLocator();
-		$vhm = $sm->get('ViewHelperManager');
-
-		$translator = $vhm->get('Translate');
-        $statusService = $sm->get('StatusService');
-		$progressService = $sm->get('ProgressService');
-		$statusChanger = $sm->get('StatusChanger');
-
-		return new StatusHelper($statusService, $progressService, $statusChanger, $translator);
-	}
-
+        return new StatusHelper($statusService, $progressService, $statusChanger, $moduleHelper, $translator);
+    }
 }
